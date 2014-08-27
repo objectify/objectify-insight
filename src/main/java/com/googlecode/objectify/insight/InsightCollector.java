@@ -50,18 +50,25 @@ public class InsightCollector {
 	}
 
 	/**
-	 * Collect some statistics. The bucket will either be claimed (object ownership) or be merged with
-	 * an equivalent bucket. Don't modify the bucket or expect its contents to remain immutable afterwards.
+	 * Collect some statistics. The bucket will be merged with an equivalent bucket.
 	 *
 	 * @param bucket
 	 */
 	public synchronized void collect(Bucket bucket) {
-		Bucket already = buckets().get(bucket.getBucketKey());
-		if (already == null) {
-			buckets().put(bucket.getBucketKey(), bucket);
-		} else {
-			already.merge(bucket);
+		if (oldest == null)
+			oldest = new Date();
+
+		Bucket existing = buckets().get(bucket.getBucketKey());
+		if (existing == null) {
+			existing = new Bucket(bucket.getBucketKey());
+			buckets().put(existing.getBucketKey(), existing);
 		}
+
+		existing.merge(bucket);
+
+		// Check time before size because flush() wipes out time
+		if (oldest.getTime() + ageThresholdMillis <= System.currentTimeMillis())
+			flush();
 
 		if (buckets().size() >= sizeThreshold)
 			flush();
@@ -71,6 +78,7 @@ public class InsightCollector {
 	private void flush() {
 		flusher.flush(buckets().values());
 		lazyBuckets = null;
+		oldest = null;
 	}
 
 	/**

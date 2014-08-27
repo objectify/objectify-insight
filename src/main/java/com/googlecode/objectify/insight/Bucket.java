@@ -2,11 +2,13 @@ package com.googlecode.objectify.insight;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * One bucket of data we aggregate to.
  */
 @Data
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class Bucket {
 

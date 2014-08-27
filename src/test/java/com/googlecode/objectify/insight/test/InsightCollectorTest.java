@@ -61,6 +61,23 @@ public class InsightCollectorTest extends TestBase {
 	}
 
 	@Test
+	public void ageCausesFlush() throws Exception {
+		collector.setAgeThresholdMillis(100);
+
+		Bucket bucket = Bucket.forGet("ns", "kindA", 1);
+
+		collector.collect(bucket);
+		collector.collect(bucket);
+
+		verify(flusher, never()).flush(anyCollectionOf(Bucket.class));
+
+		Thread.sleep(101);
+		collector.collect(bucket);
+
+		verify(flusher).flush(buckets(Bucket.forGet("ns", "kindA", 3)));
+	}
+
+	@Test
 	public void sameBucketOverAndOverDoesNotCauseFlush() throws Exception {
 		collector.setSizeThreshold(2);
 
