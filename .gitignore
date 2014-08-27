@@ -1,0 +1,11 @@
+build
+target
+test-output
+.settings
+.project
+.classpath
+.idea
+*.iml
+.svn
+.gwt
+.gradle
