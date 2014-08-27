@@ -6,11 +6,9 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.googlecode.objectify.insight.Bucket;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
 import com.googlecode.objectify.insight.InsightCollector;
-import com.googlecode.objectify.insight.test.util.BucketMatcher;
 import com.googlecode.objectify.insight.test.util.TestBase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -29,11 +27,6 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 		service = new InsightAsyncDatastoreService(raw, collector);
 	}
 
-	/** Little bit of boilerplate that makes the tests read better */
-	private Bucket bucket(Bucket matching) {
-		return argThat(new BucketMatcher(matching));
-	}
-
 	@Test
 	public void getKeyIsCollected() throws Exception {
 		runInNamespace("ns", new Runnable() {
@@ -44,7 +37,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucket(Bucket.forGet("ns", "Thing", 1)));
+		verify(collector).collect(Bucket.forGet("ns", "Thing", 1));
 	}
 
 }
