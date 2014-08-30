@@ -9,6 +9,6 @@ import lombok.Data;
 public class BucketKey {
 	private final String namespace;
 	private final String kind;
-	private final Operation operation;
+	private final Operation op;
 	private final String query;
 }

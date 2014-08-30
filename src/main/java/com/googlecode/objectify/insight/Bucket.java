@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class Bucket {
-
 	/** */
 	public static Bucket forGet(String namespace, String kind, long readCount) {
 		return new Bucket(new BucketKey(namespace, kind, Operation.LOAD, null), readCount, 0);

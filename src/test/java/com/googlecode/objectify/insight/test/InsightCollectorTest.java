@@ -3,17 +3,13 @@ package com.googlecode.objectify.insight.test;
 import com.googlecode.objectify.insight.Bucket;
 import com.googlecode.objectify.insight.Flusher;
 import com.googlecode.objectify.insight.InsightCollector;
-import com.googlecode.objectify.insight.test.util.BucketsMatcher;
 import com.googlecode.objectify.insight.test.util.TestBase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,16 +25,6 @@ public class InsightCollectorTest extends TestBase {
 	public void setUpFixture() throws Exception {
 		flusher = mock(Flusher.class);
 		collector = new InsightCollector(flusher);
-	}
-
-	/** Little bit of boilerplate that makes the tests read better */
-	private Collection<Bucket> buckets(Collection<Bucket> matching) {
-		return argThat(new BucketsMatcher(matching));
-	}
-
-	/** Little bit of boilerplate that makes the tests read better */
-	private Collection<Bucket> buckets(Bucket singletonSetContent) {
-		return buckets(Collections.singleton(singletonSetContent));
 	}
 
 	@Test

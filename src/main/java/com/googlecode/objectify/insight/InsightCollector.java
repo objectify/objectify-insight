@@ -20,9 +20,12 @@ public class InsightCollector {
 	/** Date at which the first bucket as added; null if empty */
 	private Date oldest;
 
-	/** Maximum number of unique buckets before we flush */
+	/**
+	 * Maximum number of unique buckets before we flush. Since all buckets get JSONified into a single
+	 * queue task, the hard limit for this is determined by the max size of a task (1 MB).
+	 */
 	@Getter @Setter
-	private int sizeThreshold = 5000;
+	private int sizeThreshold = 1000;
 
 	/** Maximum age of a bucket before we flush */
 	@Getter @Setter
