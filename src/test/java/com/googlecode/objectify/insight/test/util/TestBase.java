@@ -3,11 +3,17 @@
 
 package com.googlecode.objectify.insight.test.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.NamespaceManager;
+import com.google.appengine.api.taskqueue.TaskHandle;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.googlecode.objectify.insight.Bucket;
+import com.googlecode.objectify.insight.Flusher;
+import org.mockito.MockitoAnnotations;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import java.util.Collection;
@@ -17,6 +23,8 @@ import static org.mockito.Matchers.argThat;
 /**
  * All tests should extend this class to set up the GAE environment.
  * @see <a href="http://code.google.com/appengine/docs/java/howto/unittesting.html">Unit Testing in Appengine</a>
+ *
+ * Also sets up any Mockito annotated fields.
  *
  * @author Jeff Schnitzer <jeff@infohazard.org>
  */
@@ -32,6 +40,7 @@ public class TestBase
 	@BeforeMethod
 	public void setUp() {
 		this.helper.setUp();
+		MockitoAnnotations.initMocks(this);
 	}
 
 	/** */
@@ -62,4 +71,21 @@ public class TestBase
 		return buckets(Collections.singleton(singletonSetContent));
 	}
 
+	/** Convenience method */
+	protected byte[] jsonify(Object object) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsBytes(object);
+	}
+
+	/**
+	 * Make a task handle which holds the jsonified payload. Task name is an arbitrary unique string.
+	 */
+	protected TaskHandle makeTaskHandle(Object payload) throws JsonProcessingException {
+		return new TaskHandle(
+				TaskOptions.Builder.withPayload(jsonify(payload), "application/json").taskName(makeUniqueString()),
+				Flusher.DEFAULT_QUEUE);
+	}
+
+	protected String makeUniqueString() {
+		return new Object().toString().split("@")[1];
+	}
 }

@@ -61,10 +61,10 @@ public class InsightCollector {
 		if (oldest == null)
 			oldest = new Date();
 
-		Bucket existing = buckets().get(bucket.getBucketKey());
+		Bucket existing = buckets().get(bucket.getKey());
 		if (existing == null) {
-			existing = new Bucket(bucket.getBucketKey());
-			buckets().put(existing.getBucketKey(), existing);
+			existing = new Bucket(bucket.getKey());
+			buckets().put(existing.getKey(), existing);
 		}
 
 		existing.merge(bucket);

@@ -1,22 +1,28 @@
-package com.googlecode.objectify.insight;
+package com.googlecode.objectify.insight.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueConstants;
+import com.google.appengine.api.taskqueue.TaskHandle;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /** Just a slightly more convenient interface for our purposes */
 @Data
 public class QueueHelper<T> {
-	private static final ObjectMapper MAPPER = new ObjectMapper();
+	static final ObjectMapper MAPPER = new ObjectMapper();
 
+	/** */
 	private final Queue queue;
+	private final Class<T> clazz;
 
+	/** */
 	public void add(T jsonifyMe) {
 		queue.addAsync(null, makeTask(jsonifyMe));
 	}
@@ -44,5 +50,29 @@ public class QueueHelper<T> {
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/** */
+	public List<TaskHandleHelper<T>> lease(int duration, TimeUnit units, int count) {
+		List<TaskHandle> handles = queue.leaseTasks(duration, units, count);
+
+		return Lists.transform(handles, new Function<TaskHandle, TaskHandleHelper<T>>() {
+			@Override
+			public TaskHandleHelper<T> apply(TaskHandle taskHandle) {
+				return new TaskHandleHelper<T>(taskHandle, clazz);
+			}
+		});
+	}
+
+	/** */
+	public void delete(List<TaskHandleHelper<T>> handles) {
+		List<TaskHandle> raw = Lists.transform(handles, new Function<TaskHandleHelper<T>, TaskHandle>() {
+			@Override
+			public TaskHandle apply(TaskHandleHelper<T> input) {
+				return input.getRaw();
+			}
+		});
+
+		queue.deleteTaskAsync(raw);
 	}
 }

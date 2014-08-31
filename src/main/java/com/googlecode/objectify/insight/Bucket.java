@@ -2,13 +2,13 @@ package com.googlecode.objectify.insight;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * One bucket of data we aggregate to.
  */
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class Bucket {
 	/** */
@@ -16,11 +16,16 @@ public class Bucket {
 		return new Bucket(new BucketKey(namespace, kind, Operation.LOAD, null), readCount, 0);
 	}
 
-	private final BucketKey bucketKey;
+	private BucketKey key;
 
 	/** Variable data that is aggregated */
 	private long reads;
 	private long writes;
+
+	/** */
+	public Bucket(BucketKey key) {
+		this.key = key;
+	}
 
 	/** Merge the other bucket into this one */
 	public void merge(Bucket other) {

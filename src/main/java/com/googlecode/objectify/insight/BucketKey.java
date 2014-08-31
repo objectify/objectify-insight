@@ -1,14 +1,19 @@
 package com.googlecode.objectify.insight;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * Immutable key that identifies a bucket
+ * Immutable key that identifies a bucket (one vertex of the hypercube).
+ * Wish everything could be final but then Jackson can't deserialize it.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BucketKey {
-	private final String namespace;
-	private final String kind;
-	private final Operation op;
-	private final String query;
+	private String namespace;
+	private String kind;
+	private Operation op;
+	private String query;
 }

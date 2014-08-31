@@ -5,10 +5,12 @@ import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.googlecode.objectify.insight.Bucket;
-import com.googlecode.objectify.insight.BucketsPayload;
+import com.googlecode.objectify.insight.BucketList;
 import com.googlecode.objectify.insight.Flusher;
 import com.googlecode.objectify.insight.test.util.TestBase;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import java.util.ArrayList;
@@ -16,22 +18,20 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
  */
 public class FlusherTest extends TestBase {
 
-	private Queue queue;
+	@Mock private Queue queue;
+	@Captor	private ArgumentCaptor<TaskOptions> taskCaptor;
+
 	private Flusher flusher;
-	private ArgumentCaptor<TaskOptions> taskCaptor;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
-		queue = mock(Queue.class);
 		flusher = new Flusher(queue);
-		taskCaptor = ArgumentCaptor.forClass(TaskOptions.class);
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class FlusherTest extends TestBase {
 		verify(queue).addAsync(isNull(Transaction.class), taskCaptor.capture());
 		TaskOptions parameter = taskCaptor.getValue();
 
-		byte[] expectedJson = new ObjectMapper().writeValueAsBytes(new BucketsPayload(buckets));
+		byte[] expectedJson = new ObjectMapper().writeValueAsBytes(new BucketList(buckets));
 
 		assertThat(parameter.getPayload(), equalTo(expectedJson));
 

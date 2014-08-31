@@ -7,9 +7,9 @@ import com.googlecode.objectify.insight.Bucket;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
 import com.googlecode.objectify.insight.InsightCollector;
 import com.googlecode.objectify.insight.test.util.TestBase;
+import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -17,13 +17,12 @@ import static org.mockito.Mockito.verify;
 public class InsightAsyncDatastoreServiceTest extends TestBase {
 
 	private InsightAsyncDatastoreService service;
-	private AsyncDatastoreService raw;
-	private InsightCollector collector;
+
+	@Mock private AsyncDatastoreService raw;
+	@Mock private InsightCollector collector;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
-		raw = mock(AsyncDatastoreService.class);
-		collector = mock(InsightCollector.class);
 		service = new InsightAsyncDatastoreService(raw, collector);
 	}
 

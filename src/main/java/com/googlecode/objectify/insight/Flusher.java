@@ -2,6 +2,7 @@ package com.googlecode.objectify.insight;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.googlecode.objectify.insight.util.QueueHelper;
 import java.util.Collection;
 
 /**
@@ -13,7 +14,7 @@ public class Flusher {
 	public static final String DEFAULT_QUEUE = "insight";
 
 	/** The queue we use */
-	private QueueHelper<BucketsPayload> queue;
+	private QueueHelper<BucketList> queue;
 
 	/** Use the default pull queue name */
 	public Flusher() {
@@ -29,13 +30,13 @@ public class Flusher {
 	 * Change the queue we flush to.
 	 */
 	public void setQueue(Queue queue) {
-		this.queue = new QueueHelper(queue);
+		this.queue = new QueueHelper(queue, BucketList.class);
 	}
 
 	/**
 	 * Write buckets to the relevant pull queue as a single task with a JSON payload.
 	 */
 	public void flush(Collection<Bucket> buckets) {
-		queue.add(new BucketsPayload(buckets));
+		queue.add(new BucketList(buckets));
 	}
 }
