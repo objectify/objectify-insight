@@ -3,6 +3,8 @@ package com.googlecode.objectify.insight;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.googlecode.objectify.insight.util.QueueHelper;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Collection;
 
 /**
@@ -22,7 +24,8 @@ public class Flusher {
 	}
 
 	/** */
-	public Flusher(Queue queue) {
+	@Inject
+	public Flusher(@Named("insight") Queue queue) {
 		this.setQueue(queue);
 	}
 

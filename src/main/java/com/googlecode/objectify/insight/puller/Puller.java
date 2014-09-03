@@ -4,8 +4,9 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.googlecode.objectify.insight.BucketList;
 import com.googlecode.objectify.insight.util.QueueHelper;
 import com.googlecode.objectify.insight.util.TaskHandleHelper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -14,7 +15,6 @@ import java.util.logging.Level;
  * Does the work of leasing tasks from the task queue, aggregating again, and pushing
  * the result to BigQuery.
  */
-@RequiredArgsConstructor
 @Log
 public class Puller {
 
@@ -38,7 +38,8 @@ public class Puller {
 
 	/**
 	 */
-	public Puller(Queue queue, BigUploader bigUploader) {
+	@Inject
+	public Puller(@Named("insight") Queue queue, BigUploader bigUploader) {
 		this.queue = new QueueHelper<>(queue, BucketList.class);
 		this.bigUploader = bigUploader;
 	}
