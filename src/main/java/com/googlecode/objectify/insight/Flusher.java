@@ -33,7 +33,7 @@ public class Flusher {
 	 * Change the queue we flush to.
 	 */
 	public void setQueue(Queue queue) {
-		this.queue = new QueueHelper(queue, BucketList.class);
+		this.queue = new QueueHelper<BucketList>(queue, BucketList.class);
 	}
 
 	/**

@@ -22,6 +22,7 @@ public class BucketsMatcher extends ArgumentMatcher<Collection<Bucket>> {
 
 	@Override
 	public boolean matches(Object o) {
+		@SuppressWarnings("unchecked")
 		Collection<Bucket> other = (Collection<Bucket>)o;
 		Set<Bucket> otherSet = new LinkedHashSet<>(other);
 
