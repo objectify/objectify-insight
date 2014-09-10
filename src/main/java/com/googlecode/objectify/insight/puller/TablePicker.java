@@ -2,14 +2,21 @@ package com.googlecode.objectify.insight.puller;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.Table;
+import com.google.api.services.bigquery.model.TableFieldSchema;
+import com.google.api.services.bigquery.model.TableReference;
+import com.google.api.services.bigquery.model.TableSchema;
+import lombok.extern.java.Log;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Manages tables on our behalf. Makes sure we have enough tables to pick from.
  */
+@Log
 public class TablePicker {
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("YYYY-MM-dd");
 
@@ -37,6 +44,8 @@ public class TablePicker {
 	 * Make sure we have a week's worth of tables. This should be called periodically via cron - more than once a week.
 	 */
 	public void ensureEnoughTables() {
+		log.finer("Ensuring sufficient tables for " + DAYS_AHEAD + " days");
+
 		long now = System.currentTimeMillis();
 
 		for (int i = 0; i < DAYS_AHEAD; i++) {
@@ -52,6 +61,45 @@ public class TablePicker {
 
 	/** */
 	private void ensureTable(String tableId) {
+		log.finest("Ensuring table exists: " + tableId);
+
+		TableReference reference = new TableReference();
+		reference.setProjectId(insightDataset.projectId());
+		reference.setDatasetId(insightDataset.datasetId());
+		reference.setTableId(tableId);
+
+		Table table = new Table();
+		table.setTableReference(reference);
+		table.setSchema(schema());
+
+		try {
+			bigquery.tables().insert(insightDataset.projectId(), insightDataset.datasetId(), table).execute();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
+	private TableSchema schema() {
+		List<TableFieldSchema> fields = new ArrayList<>();
+
+		fields.add(tableFieldSchema("namespace", "STRING"));
+		fields.add(tableFieldSchema("kind", "STRING"));
+		fields.add(tableFieldSchema("op", "STRING"));
+		fields.add(tableFieldSchema("query", "STRING"));
+
+		fields.add(tableFieldSchema("reads", "INTEGER"));
+		fields.add(tableFieldSchema("writes", "INTEGER"));
+
+		TableSchema schema = new TableSchema();
+		schema.setFields(fields);
+
+		return schema;
+	}
+
+	private TableFieldSchema tableFieldSchema(String name, String type) {
+		TableFieldSchema field = new TableFieldSchema();
+		field.setName(name);
+		field.setType(type);
+		return field;
+	}
 }
