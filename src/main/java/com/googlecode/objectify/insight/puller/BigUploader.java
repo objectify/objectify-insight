@@ -6,6 +6,7 @@ import com.google.api.services.bigquery.model.TableDataInsertAllRequest.Rows;
 import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
 import com.google.api.services.bigquery.model.TableRow;
 import com.googlecode.objectify.insight.Bucket;
+import lombok.extern.java.Log;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
  * Does the work of leasing tasks from the task queue, aggregating again, and pushing
  * the result to BigQuery.
  */
+@Log
 public class BigUploader {
 
 	private final Bigquery bigquery;
@@ -30,6 +32,7 @@ public class BigUploader {
 	}
 
 	public void upload(Collection<Bucket> buckets) {
+		log.finer("Uploading " + buckets.size() + " buckets to bigquery");
 
 		// Seriously, Google, you f'd up the naming of 'Rows'.
 

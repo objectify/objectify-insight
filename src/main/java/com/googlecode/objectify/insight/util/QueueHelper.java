@@ -46,7 +46,7 @@ public class QueueHelper<T> {
 	private TaskOptions makeTask(T jsonifyMe) {
 		try {
 			byte[] payload = MAPPER.writeValueAsBytes(jsonifyMe);
-			return TaskOptions.Builder.withMethod(TaskOptions.Method.PULL).payload(payload, "application/json");
+			return TaskOptions.Builder.withMethod(TaskOptions.Method.PULL).payload(payload);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}

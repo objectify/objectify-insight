@@ -1,6 +1,5 @@
 package com.googlecode.objectify.insight;
 
-import com.google.appengine.api.NamespaceManager;
 import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.DatastoreAttributes;
 import com.google.appengine.api.datastore.Entity;
@@ -28,22 +27,31 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 
 	@Override
 	public Future<Entity> get(Key key) {
-		collector.collect(Bucket.forGet(NamespaceManager.get(), key.getKind(), 1));
+		collector.collect(Bucket.forGet(key));
+
 		return raw.get(key);
 	}
 
 	@Override
 	public Future<Entity> get(Transaction transaction, Key key) {
+		collector.collect(Bucket.forGet(key));
+
 		return raw.get(transaction, key);
 	}
 
 	@Override
 	public Future<Map<Key, Entity>> get(Iterable<Key> keys) {
+		for (Key key: keys)
+			collector.collect(Bucket.forGet(key));
+
 		return raw.get(keys);
 	}
 
 	@Override
 	public Future<Map<Key, Entity>> get(Transaction transaction, Iterable<Key> keys) {
+		for (Key key: keys)
+			collector.collect(Bucket.forGet(key));
+
 		return raw.get(transaction, keys);
 	}
 

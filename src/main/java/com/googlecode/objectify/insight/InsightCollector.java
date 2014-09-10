@@ -1,17 +1,21 @@
 package com.googlecode.objectify.insight;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.java.Log;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Aggregates statistics and flushes them to a pull queue as necessary. Thread-safe. You should
  * create just one of these per application and pass it into all InsightAsyncDatastoreService instances.
  */
-@RequiredArgsConstructor
+@Log
+@Singleton
 public class InsightCollector {
 
 	/** Where we flush statistics when we cross thresholds */
@@ -44,6 +48,13 @@ public class InsightCollector {
 		this(new Flusher());
 	}
 
+	/**
+	 */
+	@Inject
+	public InsightCollector(Flusher flusher) {
+		this.flusher = flusher;
+	}
+
 	/** Use this instead of referencing the lazy var explicitly */
 	private Map<BucketKey, Bucket> buckets() {
 		if (lazyBuckets == null)
@@ -58,6 +69,9 @@ public class InsightCollector {
 	 * @param bucket
 	 */
 	public synchronized void collect(Bucket bucket) {
+		if (log.isLoggable(Level.FINEST))
+			log.finest("Collecting bucket " + bucket);
+
 		if (oldest == null)
 			oldest = new Date();
 

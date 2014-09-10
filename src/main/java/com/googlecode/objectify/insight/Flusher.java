@@ -3,13 +3,17 @@ package com.googlecode.objectify.insight;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.googlecode.objectify.insight.util.QueueHelper;
+import lombok.extern.java.Log;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.Collection;
 
 /**
  * Writes aggregated statistics to a pull queue.
  */
+@Log
+@Singleton
 public class Flusher {
 
 	/** The default pull queue that statistics are flushed to */
@@ -40,6 +44,8 @@ public class Flusher {
 	 * Write buckets to the relevant pull queue as a single task with a JSON payload.
 	 */
 	public void flush(Collection<Bucket> buckets) {
+		log.finer("Flushing " + buckets.size() + " buckets to the queue");
+
 		queue.add(new BucketList(buckets));
 	}
 }

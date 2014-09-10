@@ -7,6 +7,7 @@ import com.googlecode.objectify.insight.util.TaskHandleHelper;
 import lombok.extern.java.Log;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -16,6 +17,7 @@ import java.util.logging.Level;
  * the result to BigQuery.
  */
 @Log
+@Singleton
 public class Puller {
 
 	/** */
@@ -68,15 +70,19 @@ public class Puller {
 	private int processOneBatch() {
 		List<TaskHandleHelper<BucketList>> handles = queue.lease(leaseDurationSeconds, TimeUnit.SECONDS, batchSize);
 
-		BucketAggregator aggregator = new BucketAggregator();
+		if (!handles.isEmpty()) {
+			log.finer("Leased " + handles.size() + " bucketlist tasks");
 
-		for (TaskHandleHelper<BucketList> handle : handles) {
-			aggregator.aggregate(handle.getPayload().getBuckets());
+			BucketAggregator aggregator = new BucketAggregator();
+
+			for (TaskHandleHelper<BucketList> handle : handles) {
+				aggregator.aggregate(handle.getPayload().getBuckets());
+			}
+
+			bigUploader.upload(aggregator.getBuckets());
+
+			queue.delete(handles);
 		}
-
-		bigUploader.upload(aggregator.getBuckets());
-
-		queue.delete(handles);
 
 		return handles.size();
 	}

@@ -1,5 +1,7 @@
 package com.googlecode.objectify.insight;
 
+import com.google.appengine.api.NamespaceManager;
+import com.google.appengine.api.datastore.Key;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,10 @@ public class Bucket {
 	/** */
 	public static Bucket forGet(String namespace, String kind, long readCount) {
 		return new Bucket(new BucketKey(namespace, kind, Operation.LOAD, null), readCount, 0);
+	}
+	/** */
+	public static Bucket forGet(Key key) {
+		return forGet(NamespaceManager.get(), key.getKind(), 1);
 	}
 
 	private BucketKey key;

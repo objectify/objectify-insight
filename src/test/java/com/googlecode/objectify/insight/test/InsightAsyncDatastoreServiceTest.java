@@ -10,6 +10,7 @@ import com.googlecode.objectify.insight.test.util.TestBase;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -39,4 +40,42 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 		verify(collector).collect(Bucket.forGet("ns", "Thing", 1));
 	}
 
+	@Test
+	public void getKeyWithTxnIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Key key = KeyFactory.createKey("Thing", 123L);
+				service.get(null, key);
+			}
+		});
+
+		verify(collector).collect(Bucket.forGet("ns", "Thing", 1));
+	}
+
+	@Test
+	public void getKeysIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Key key = KeyFactory.createKey("Thing", 123L);
+				service.get(Collections.singleton(key));
+			}
+		});
+
+		verify(collector).collect(Bucket.forGet("ns", "Thing", 1));
+	}
+
+	@Test
+	public void getKeysWithTxnIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Key key = KeyFactory.createKey("Thing", 123L);
+				service.get(null, Collections.singleton(key));
+			}
+		});
+
+		verify(collector).collect(Bucket.forGet("ns", "Thing", 1));
+	}
 }

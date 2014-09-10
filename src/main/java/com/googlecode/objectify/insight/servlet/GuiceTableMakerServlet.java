@@ -2,6 +2,7 @@ package com.googlecode.objectify.insight.servlet;
 
 import com.googlecode.objectify.insight.puller.TablePicker;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import java.io.IOException;
  * Call this servlet from cron once per day. It will make sure there are an appropriate set of tables in bigquery.
  * Make sure this servlet starts before the PullerServlet.
  */
+@Singleton
 public class GuiceTableMakerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1;
