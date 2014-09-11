@@ -90,6 +90,7 @@ public class TablePicker {
 	private TableSchema schema() {
 		List<TableFieldSchema> fields = new ArrayList<>();
 
+		fields.add(tableFieldSchema("uploaded", "TIMESTAMP"));
 		fields.add(tableFieldSchema("namespace", "STRING"));
 		fields.add(tableFieldSchema("kind", "STRING"));
 		fields.add(tableFieldSchema("op", "STRING"));

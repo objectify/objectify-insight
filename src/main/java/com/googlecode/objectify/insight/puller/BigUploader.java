@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +41,7 @@ public class BigUploader {
 
 		for (Bucket bucket : buckets) {
 			TableRow row = new TableRow();
+			row.set("uploaded", new Date());
 			row.set("namespace", bucket.getKey().getNamespace());
 			row.set("kind", bucket.getKey().getKind());
 			row.set("op", bucket.getKey().getOp());
