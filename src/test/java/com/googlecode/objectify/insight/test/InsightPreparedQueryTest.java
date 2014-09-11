@@ -285,4 +285,5 @@ public class InsightPreparedQueryTest extends TestBase {
 			}
 		});
 	}
+
 }

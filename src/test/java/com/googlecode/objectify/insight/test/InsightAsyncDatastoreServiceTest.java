@@ -4,10 +4,13 @@ import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.BucketFactory;
 import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
+import com.googlecode.objectify.insight.InsightPreparedQuery;
 import com.googlecode.objectify.insight.Recorder;
 import com.googlecode.objectify.insight.test.util.TestBase;
 import org.mockito.Mock;
@@ -15,6 +18,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.Collections;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -214,5 +220,25 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 		});
 
 		verify(collector).collect(bucketFactory.forDelete("ns", "Thing", 1));
+	}
+
+	@Test
+	public void keysOnlyQueriesAreNotCollected() throws Exception {
+		Query query = new Query();
+		query.setKeysOnly();
+
+		PreparedQuery pq = service.prepare(query);
+
+		assertThat(pq, not(instanceOf(InsightPreparedQuery.class)));
+	}
+
+	@Test
+	public void keysOnlyTxnQueriesAreNotCollected() throws Exception {
+		Query query = new Query();
+		query.setKeysOnly();
+
+		PreparedQuery pq = service.prepare(null, query);
+
+		assertThat(pq, not(instanceOf(InsightPreparedQuery.class)));
 	}
 }
