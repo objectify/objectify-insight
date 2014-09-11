@@ -1,5 +1,6 @@
 package com.googlecode.objectify.insight.puller;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.Table;
 import com.google.api.services.bigquery.model.TableFieldSchema;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Log
 public class TablePicker {
-	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("YYYY-MM-dd");
+	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("YYYY_MM_dd");
 
 	/** Number of days ahead to create tables. */
 	private static final int DAYS_AHEAD = 7;
@@ -73,7 +74,14 @@ public class TablePicker {
 		table.setSchema(schema());
 
 		try {
-			bigquery.tables().insert(insightDataset.projectId(), insightDataset.datasetId(), table).execute();
+			try {
+				bigquery.tables().insert(insightDataset.projectId(), insightDataset.datasetId(), table).execute();
+			} catch (GoogleJsonResponseException e) {
+				if (e.getStatusCode() == 409)
+					log.finest("Table " + tableId + " already exists");    // Do nothing more
+				else
+					throw e;
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
