@@ -145,12 +145,12 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 
 	@Override
 	public PreparedQuery prepare(Query query) {
-		return raw.prepare(query);
+		return new InsightPreparedQuery(raw.prepare(query), collector, query.toString());
 	}
 
 	@Override
 	public PreparedQuery prepare(Transaction transaction, Query query) {
-		return raw.prepare(transaction, query);
+		return new InsightPreparedQuery(raw.prepare(transaction, query), collector, query.toString());
 	}
 
 	@Override

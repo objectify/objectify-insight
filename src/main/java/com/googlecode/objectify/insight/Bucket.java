@@ -44,6 +44,15 @@ public class Bucket {
 
 	/**
 	 */
+	public static Bucket forQuery(String namespace, String kind, String queryString, long readCount) {
+		return new Bucket(new BucketKey(namespace, kind, Operation.LOAD, queryString), readCount, 0);
+	}
+	public static Bucket forQuery(Entity entity, String queryString) {
+		return forQuery(NamespaceManager.get(), entity.getKind(), queryString, 1);
+	}
+
+	/**
+	 */
 	private BucketKey key;
 
 	/** Variable data that is aggregated */

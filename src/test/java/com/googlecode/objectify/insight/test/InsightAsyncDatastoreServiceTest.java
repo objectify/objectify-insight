@@ -17,6 +17,7 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 /**
+ * Tests the nonquery methods. Query methods are tested in InsightPreparedQueryTest.
  */
 public class InsightAsyncDatastoreServiceTest extends TestBase {
 
@@ -211,5 +212,4 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 
 		verify(collector).collect(Bucket.forDelete("ns", "Thing", 1));
 	}
-
 }
