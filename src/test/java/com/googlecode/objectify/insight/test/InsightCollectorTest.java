@@ -2,8 +2,8 @@ package com.googlecode.objectify.insight.test;
 
 import com.googlecode.objectify.insight.Bucket;
 import com.googlecode.objectify.insight.BucketFactory;
+import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.Flusher;
-import com.googlecode.objectify.insight.InsightCollector;
 import com.googlecode.objectify.insight.test.util.TestBase;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
@@ -21,13 +21,13 @@ public class InsightCollectorTest extends TestBase {
 
 	@Mock private Flusher flusher;
 
-	private InsightCollector collector;
+	private Collector collector;
 	private BucketFactory bucketFactory;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
 		bucketFactory = constantTimeBucketFactory();
-		collector = new InsightCollector(flusher);
+		collector = new Collector(flusher);
 	}
 
 	@Test

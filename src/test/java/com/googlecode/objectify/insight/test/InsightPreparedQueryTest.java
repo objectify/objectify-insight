@@ -11,8 +11,8 @@ import com.google.appengine.api.datastore.QueryResultIterable;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.BucketFactory;
+import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
-import com.googlecode.objectify.insight.InsightCollector;
 import com.googlecode.objectify.insight.Recorder;
 import com.googlecode.objectify.insight.test.util.FakeQueryResultList;
 import com.googlecode.objectify.insight.test.util.FakeQueryResultList.QueryResult;
@@ -37,7 +37,7 @@ public class InsightPreparedQueryTest extends TestBase {
 	private InsightAsyncDatastoreService service;
 	private BucketFactory bucketFactory;
 
-	@Mock private InsightCollector collector;
+	@Mock private Collector collector;
 	@Mock private AsyncDatastoreService rawService;
 	@Mock private PreparedQuery rawPq;
 

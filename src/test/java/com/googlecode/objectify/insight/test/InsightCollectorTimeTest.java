@@ -3,8 +3,8 @@ package com.googlecode.objectify.insight.test;
 import com.googlecode.objectify.insight.Bucket;
 import com.googlecode.objectify.insight.BucketFactory;
 import com.googlecode.objectify.insight.Clock;
+import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.Flusher;
-import com.googlecode.objectify.insight.InsightCollector;
 import com.googlecode.objectify.insight.test.util.TestBase;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
@@ -23,14 +23,14 @@ public class InsightCollectorTimeTest extends TestBase {
 
 	private BucketFactory bucketFactory;
 
-	private InsightCollector collector;
+	private Collector collector;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
 		when(clock.getTime()).thenReturn(100L, 200L);
 
 		bucketFactory = new BucketFactory(clock);
-		collector = new InsightCollector(flusher);
+		collector = new Collector(flusher);
 	}
 
 	/**

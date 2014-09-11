@@ -13,10 +13,10 @@ import javax.inject.Inject;
 public class Recorder {
 
 	private final BucketFactory bucketFactory;
-	private final InsightCollector collector;
+	private final Collector collector;
 
 	@Inject
-	public Recorder(BucketFactory bucketFactory, InsightCollector collector) {
+	public Recorder(BucketFactory bucketFactory, Collector collector) {
 		this.bucketFactory = bucketFactory;
 		this.collector = collector;
 	}

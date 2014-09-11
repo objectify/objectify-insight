@@ -16,7 +16,7 @@ import java.util.logging.Level;
  */
 @Log
 @Singleton
-public class InsightCollector {
+public class Collector {
 
 	/** Where we flush statistics when we cross thresholds */
 	@Getter
@@ -45,14 +45,14 @@ public class InsightCollector {
 	/**
 	 * Use the standard Flusher & Clock
 	 */
-	public InsightCollector() {
+	public Collector() {
 		this(new Flusher());
 	}
 
 	/**
 	 */
 	@Inject
-	public InsightCollector(Flusher flusher) {
+	public Collector(Flusher flusher) {
 		this.flusher = flusher;
 	}
 

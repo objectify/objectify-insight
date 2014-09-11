@@ -6,8 +6,8 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.BucketFactory;
+import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
-import com.googlecode.objectify.insight.InsightCollector;
 import com.googlecode.objectify.insight.Recorder;
 import com.googlecode.objectify.insight.test.util.TestBase;
 import org.mockito.Mock;
@@ -26,7 +26,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 	private BucketFactory bucketFactory;
 
 	@Mock private AsyncDatastoreService raw;
-	@Mock private InsightCollector collector;
+	@Mock private Collector collector;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
