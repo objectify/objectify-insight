@@ -1,8 +1,10 @@
 package com.googlecode.objectify.insight.test;
 
 import com.google.appengine.api.datastore.AsyncDatastoreService;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.Bucket;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
 import com.googlecode.objectify.insight.InsightCollector;
@@ -10,6 +12,7 @@ import com.googlecode.objectify.insight.test.util.TestBase;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import java.util.Arrays;
 import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
@@ -28,7 +31,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 	}
 
 	@Test
-	public void getKeyIsCollected() throws Exception {
+	public void getIsCollected() throws Exception {
 		runInNamespace("ns", new Runnable() {
 			@Override
 			public void run() {
@@ -41,7 +44,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 	}
 
 	@Test
-	public void getKeyWithTxnIsCollected() throws Exception {
+	public void getWithTxnIsCollected() throws Exception {
 		runInNamespace("ns", new Runnable() {
 			@Override
 			public void run() {
@@ -54,7 +57,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 	}
 
 	@Test
-	public void getKeysIsCollected() throws Exception {
+	public void getMultiIsCollected() throws Exception {
 		runInNamespace("ns", new Runnable() {
 			@Override
 			public void run() {
@@ -67,7 +70,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 	}
 
 	@Test
-	public void getKeysWithTxnIsCollected() throws Exception {
+	public void getMultiWithTxnIsCollected() throws Exception {
 		runInNamespace("ns", new Runnable() {
 			@Override
 			public void run() {
@@ -78,4 +81,135 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 
 		verify(collector).collect(Bucket.forGet("ns", "Thing", 1));
 	}
+
+	@Test
+	public void putInsertIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Entity ent = new Entity("Thing");	// no id
+				service.put(ent);
+			}
+		});
+
+		verify(collector).collect(Bucket.forPut("ns", "Thing", true, 1));
+	}
+
+	@Test
+	public void putUpdateIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Entity ent = new Entity("Thing", 123L);
+				service.put(ent);
+			}
+		});
+
+		verify(collector).collect(Bucket.forPut("ns", "Thing", false, 1));
+	}
+
+	@Test
+	public void putWithTxnInsertIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Entity ent = new Entity("Thing");	// no id
+				service.put(null, ent);
+			}
+		});
+
+		verify(collector).collect(Bucket.forPut("ns", "Thing", true, 1));
+	}
+
+	@Test
+	public void putWithTxnUpdateIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Entity ent = new Entity("Thing", 123L);
+				service.put(null, ent);
+			}
+		});
+
+		verify(collector).collect(Bucket.forPut("ns", "Thing", false, 1));
+	}
+
+	@Test
+	public void putMultiIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				service.put(Arrays.asList(new Entity("Thing"), new Entity("Thing", 123L)));
+			}
+		});
+
+		verify(collector).collect(Bucket.forPut("ns", "Thing", true, 1));
+		verify(collector).collect(Bucket.forPut("ns", "Thing", false, 1));
+	}
+
+	@Test
+	public void putMultiWithTxnIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				service.put(null, Arrays.asList(new Entity("Thing"), new Entity("Thing", 123L)));
+			}
+		});
+
+		verify(collector).collect(Bucket.forPut("ns", "Thing", true, 1));
+		verify(collector).collect(Bucket.forPut("ns", "Thing", false, 1));
+	}
+
+	@Test
+	public void deleteIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Key key = KeyFactory.createKey("Thing", 123L);
+				service.delete(key);
+			}
+		});
+
+		verify(collector).collect(Bucket.forDelete("ns", "Thing", 1));
+	}
+
+	@Test
+	public void deleteWithTxnIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Key key = KeyFactory.createKey("Thing", 123L);
+				service.delete((Transaction)null, key);
+			}
+		});
+
+		verify(collector).collect(Bucket.forDelete("ns", "Thing", 1));
+	}
+
+	@Test
+	public void deleteMultiIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Key key = KeyFactory.createKey("Thing", 123L);
+				service.delete(Collections.singleton(key));
+			}
+		});
+
+		verify(collector).collect(Bucket.forDelete("ns", "Thing", 1));
+	}
+
+	@Test
+	public void deleteMultiWithTxnIsCollected() throws Exception {
+		runInNamespace("ns", new Runnable() {
+			@Override
+			public void run() {
+				Key key = KeyFactory.createKey("Thing", 123L);
+				service.delete(null, Collections.singleton(key));
+			}
+		});
+
+		verify(collector).collect(Bucket.forDelete("ns", "Thing", 1));
+	}
+
 }

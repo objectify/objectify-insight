@@ -28,14 +28,12 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	@Override
 	public Future<Entity> get(Key key) {
 		collector.collect(Bucket.forGet(key));
-
 		return raw.get(key);
 	}
 
 	@Override
 	public Future<Entity> get(Transaction transaction, Key key) {
 		collector.collect(Bucket.forGet(key));
-
 		return raw.get(transaction, key);
 	}
 
@@ -57,41 +55,61 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 
 	@Override
 	public Future<Key> put(Entity entity) {
+		collector.collect(Bucket.forPut(entity));
 		return raw.put(entity);
 	}
 
 	@Override
 	public Future<Key> put(Transaction transaction, Entity entity) {
+		collector.collect(Bucket.forPut(entity));
 		return raw.put(transaction, entity);
 	}
 
 	@Override
 	public Future<List<Key>> put(Iterable<Entity> entities) {
+		for (Entity ent: entities)
+			collector.collect(Bucket.forPut(ent));
+
 		return raw.put(entities);
 	}
 
 	@Override
 	public Future<List<Key>> put(Transaction transaction, Iterable<Entity> entities) {
+		for (Entity ent: entities)
+			collector.collect(Bucket.forPut(ent));
+
 		return raw.put(transaction, entities);
 	}
 
 	@Override
 	public Future<Void> delete(Key... keys) {
+		for (Key key: keys)
+			collector.collect(Bucket.forDelete(key));
+
 		return raw.delete(keys);
 	}
 
 	@Override
 	public Future<Void> delete(Transaction transaction, Key... keys) {
+		for (Key key: keys)
+			collector.collect(Bucket.forDelete(key));
+
 		return raw.delete(transaction, keys);
 	}
 
 	@Override
 	public Future<Void> delete(Iterable<Key> keys) {
+		for (Key key: keys)
+			collector.collect(Bucket.forDelete(key));
+
 		return raw.delete(keys);
 	}
 
 	@Override
 	public Future<Void> delete(Transaction transaction, Iterable<Key> keys) {
+		for (Key key: keys)
+			collector.collect(Bucket.forDelete(key));
+
 		return raw.delete(transaction, keys);
 	}
 
