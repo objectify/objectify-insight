@@ -46,6 +46,7 @@ public class BigUploader {
 			row.set("kind", bucket.getKey().getKind());
 			row.set("op", bucket.getKey().getOp());
 			row.set("query", bucket.getKey().getQuery());
+			row.set("time", new Date(bucket.getKey().getTime()));
 			row.set("reads", bucket.getReads());
 			row.set("writes", bucket.getWrites());
 

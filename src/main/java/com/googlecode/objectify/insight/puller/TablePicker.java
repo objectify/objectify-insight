@@ -95,6 +95,7 @@ public class TablePicker {
 		fields.add(tableFieldSchema("kind", "STRING"));
 		fields.add(tableFieldSchema("op", "STRING"));
 		fields.add(tableFieldSchema("query", "STRING"));
+		fields.add(tableFieldSchema("time", "TIMESTAMP"));
 
 		fields.add(tableFieldSchema("reads", "INTEGER"));
 		fields.add(tableFieldSchema("writes", "INTEGER"));
