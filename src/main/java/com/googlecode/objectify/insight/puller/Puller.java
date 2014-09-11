@@ -52,6 +52,8 @@ public class Puller {
 	 * should be called regularly on a cron schedule (say, once per minute).
 	 */
 	public void execute() {
+		log.finest("Pulling");
+
 		while (true) {
 			try {
 				if (processOneBatch() < batchSize)

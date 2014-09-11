@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,18 +34,19 @@ public class BigUploader {
 	public void upload(Collection<Bucket> buckets) {
 		log.finer("Uploading " + buckets.size() + " buckets to bigquery");
 
-		// Seriously, Google, you f'd up the naming of 'Rows'.
+		// Seriously, Google, you f'd up the naming of 'Rows'. The date handling is atrocious.
+		// And what's with the whole new JSON layer, including annotations? This library is crap.
 
 		List<Rows> rows = new ArrayList<Rows>();
 
 		for (Bucket bucket : buckets) {
 			TableRow row = new TableRow();
-			row.set("uploaded", new Date());
+			row.set("uploaded", System.currentTimeMillis() / 1000f);	// unix timestamp
 			row.set("namespace", bucket.getKey().getNamespace());
 			row.set("kind", bucket.getKey().getKind());
 			row.set("op", bucket.getKey().getOp());
 			row.set("query", bucket.getKey().getQuery());
-			row.set("time", new Date(bucket.getKey().getTime()));
+			row.set("time", bucket.getKey().getTime() / 1000f);	// unix timestamp
 			row.set("reads", bucket.getReads());
 			row.set("writes", bucket.getWrites());
 
