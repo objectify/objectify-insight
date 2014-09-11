@@ -38,7 +38,7 @@ public class InsightPreparedQuery implements PreparedQuery {
 
 	@Override
 	public QueryResultIterable<Entity> asQueryResultIterable(FetchOptions fetchOptions) {
-		return new InsightIterable(raw.asQueryResultIterable(fetchOptions), collector, query);
+		return new InsightQueryResultIterable(raw.asQueryResultIterable(fetchOptions), collector, query);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class InsightPreparedQuery implements PreparedQuery {
 
 	@Override
 	public QueryResultIterable<Entity> asQueryResultIterable() {
-		return new InsightIterable(raw.asQueryResultIterable(), collector, query);
+		return new InsightQueryResultIterable(raw.asQueryResultIterable(), collector, query);
 	}
 
 	@Override

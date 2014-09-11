@@ -1,15 +1,16 @@
 package com.googlecode.objectify.insight;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.QueryResultIterable;
+import com.google.appengine.api.datastore.QueryResultIterator;
 import lombok.RequiredArgsConstructor;
-import java.util.Iterator;
 
 /**
  */
 @RequiredArgsConstructor
-public class InsightIterable implements Iterable<Entity> {
+public class InsightQueryResultIterable implements QueryResultIterable<Entity> {
 
-	private final Iterable<Entity> raw;
+	private final QueryResultIterable<Entity> raw;
 
 	protected final InsightCollector collector;
 
@@ -18,7 +19,7 @@ public class InsightIterable implements Iterable<Entity> {
 	private boolean collected;
 
 	@Override
-	public Iterator<Entity> iterator() {
+	public QueryResultIterator<Entity> iterator() {
 		if (collected) {
 			return raw.iterator();
 		} else {

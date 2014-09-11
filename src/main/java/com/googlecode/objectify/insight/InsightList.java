@@ -19,7 +19,9 @@ import java.util.ListIterator;
  */
 public class InsightList extends InsightIterable implements QueryResultList<Entity> {
 
-	List<Entity> raw;
+	private final List<Entity> raw;
+
+	private boolean collected;
 
 	public InsightList(List<Entity> raw, InsightCollector collector, String query) {
 		super(raw, collector, query);
@@ -56,8 +58,11 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 	public Object[] toArray() {
 		Object[] array = raw.toArray();
 
-		for (Object o: array)
-			collector.collect(Bucket.forQuery((Entity)o, query));
+		if (!collected) {
+			collected = true;
+			for (Object o : array)
+				collector.collect(Bucket.forQuery((Entity)o, query));
+		}
 
 		return array;
 	}
@@ -66,8 +71,11 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 	public <T> T[] toArray(T[] a) {
 		T[] array = raw.toArray(a);
 
-		for (T o: array)
-			collector.collect(Bucket.forQuery((Entity)o, query));
+		if (!collected) {
+			collected = true;
+			for (Object o : array)
+				collector.collect(Bucket.forQuery((Entity)o, query));
+		}
 
 		return array;
 	}
@@ -144,12 +152,26 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 
 	@Override
 	public ListIterator<Entity> listIterator() {
-		return InsightIterator.create(raw.listIterator(), collector, query);
+		ListIterator<Entity> rawIt = raw.listIterator();
+
+		if (!collected) {
+			collected = true;
+			rawIt = InsightIterator.create(rawIt, collector, query);
+		}
+
+		return rawIt;
 	}
 
 	@Override
 	public ListIterator<Entity> listIterator(int index) {
-		return InsightIterator.create(raw.listIterator(index), collector, query);
+		ListIterator<Entity> rawIt = raw.listIterator(index);
+
+		if (!collected) {
+			collected = true;
+			rawIt = InsightIterator.create(rawIt, collector, query);
+		}
+
+		return rawIt;
 	}
 
 	@Override

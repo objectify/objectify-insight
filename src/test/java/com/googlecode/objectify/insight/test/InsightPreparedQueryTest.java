@@ -3,9 +3,12 @@ package com.googlecode.objectify.insight.test;
 import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.FetchOptions.Builder;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.QueryResultIterable;
+import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.Bucket;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
@@ -72,7 +75,9 @@ public class InsightPreparedQueryTest extends TestBase {
 		runTest(new Runnable() {
 			@Override
 			public void run() {
-				iterate(service.prepare(QUERY).asIterable());
+				Iterable<Entity> it = service.prepare(QUERY).asIterable();
+				iterate(it);
+				iterate(it);
 			}
 		});
 	}
@@ -84,7 +89,9 @@ public class InsightPreparedQueryTest extends TestBase {
 		runTest(new Runnable() {
 			@Override
 			public void run() {
-				iterate(service.prepare(null, QUERY).asIterable());
+				Iterable<Entity> iterable = service.prepare(null, QUERY).asIterable();
+				iterate(iterable);
+				iterate(iterable);
 			}
 		});
 	}
@@ -96,7 +103,9 @@ public class InsightPreparedQueryTest extends TestBase {
 		runTest(new Runnable() {
 			@Override
 			public void run() {
-				iterate(service.prepare(QUERY).asQueryResultIterable());
+				QueryResultIterable<Entity> iterable = service.prepare(QUERY).asQueryResultIterable();
+				iterate(iterable);
+				iterate(iterable);
 			}
 		});
 	}
@@ -108,7 +117,9 @@ public class InsightPreparedQueryTest extends TestBase {
 		runTest(new Runnable() {
 			@Override
 			public void run() {
-				iterate(service.prepare(QUERY).asQueryResultIterable(FetchOptions.Builder.withDefaults()));
+				QueryResultIterable<Entity> iterable = service.prepare(QUERY).asQueryResultIterable(Builder.withDefaults());
+				iterate(iterable);
+				iterate(iterable);
 			}
 		});
 	}
@@ -120,7 +131,9 @@ public class InsightPreparedQueryTest extends TestBase {
 		runTest(new Runnable() {
 			@Override
 			public void run() {
-				iterate(service.prepare(QUERY).asIterable(FetchOptions.Builder.withDefaults()));
+				Iterable<Entity> iterable = service.prepare(QUERY).asIterable(Builder.withDefaults());
+				iterate(iterable);
+				iterate(iterable);
 			}
 		});
 	}
@@ -132,7 +145,9 @@ public class InsightPreparedQueryTest extends TestBase {
 		runTest(new Runnable() {
 			@Override
 			public void run() {
-				iterate(service.prepare(QUERY).asList(FetchOptions.Builder.withDefaults()));
+				List<Entity> list = service.prepare(QUERY).asList(Builder.withDefaults());
+				iterate(list);
+				iterate(list);
 			}
 		});
 	}
@@ -144,7 +159,9 @@ public class InsightPreparedQueryTest extends TestBase {
 		runTest(new Runnable() {
 			@Override
 			public void run() {
-				iterate(service.prepare(QUERY).asQueryResultList(FetchOptions.Builder.withDefaults()));
+				QueryResultList<Entity> list = service.prepare(QUERY).asQueryResultList(Builder.withDefaults());
+				iterate(list);
+				iterate(list);
 			}
 		});
 	}
@@ -209,4 +226,59 @@ public class InsightPreparedQueryTest extends TestBase {
 		});
 	}
 
+	@Test
+	public void listToArrayIsCollected() throws Exception {
+		when(rawPq.asList(any(FetchOptions.class))).thenReturn(ENTITIES);
+
+		runTest(new Runnable() {
+			@Override
+			public void run() {
+				List<Entity> list = service.prepare(QUERY).asList(Builder.withDefaults());
+				list.toArray();
+				list.toArray();
+			}
+		});
+	}
+
+	@Test
+	public void queryResultListToArrayIsCollected() throws Exception {
+		when(rawPq.asQueryResultList(any(FetchOptions.class))).thenReturn(ENTITIES);
+
+		runTest(new Runnable() {
+			@Override
+			public void run() {
+				List<Entity> list = service.prepare(QUERY).asQueryResultList(Builder.withDefaults());
+				list.toArray();
+				list.toArray();
+			}
+		});
+	}
+
+	@Test
+	public void listToArray2IsCollected() throws Exception {
+		when(rawPq.asList(any(FetchOptions.class))).thenReturn(ENTITIES);
+
+		runTest(new Runnable() {
+			@Override
+			public void run() {
+				List<Entity> list = service.prepare(QUERY).asList(Builder.withDefaults());
+				list.toArray(new Entity[0]);
+				list.toArray(new Entity[0]);
+			}
+		});
+	}
+
+	@Test
+	public void queryResultListToArray2IsCollected() throws Exception {
+		when(rawPq.asQueryResultList(any(FetchOptions.class))).thenReturn(ENTITIES);
+
+		runTest(new Runnable() {
+			@Override
+			public void run() {
+				List<Entity> list = service.prepare(QUERY).asQueryResultList(Builder.withDefaults());
+				list.toArray(new Entity[0]);
+				list.toArray(new Entity[0]);
+			}
+		});
+	}
 }
