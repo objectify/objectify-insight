@@ -23,12 +23,12 @@ public class InsightPreparedQuery implements PreparedQuery {
 
 	@Override
 	public List<Entity> asList(FetchOptions fetchOptions) {
-		return raw.asList(fetchOptions);
+		return new InsightList(raw.asList(fetchOptions), collector, query);
 	}
 
 	@Override
 	public QueryResultList<Entity> asQueryResultList(FetchOptions fetchOptions) {
-		return raw.asQueryResultList(fetchOptions);
+		return new InsightList(raw.asQueryResultList(fetchOptions), collector, query);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class InsightPreparedQuery implements PreparedQuery {
 
 	@Override
 	public QueryResultIterable<Entity> asQueryResultIterable(FetchOptions fetchOptions) {
-		return raw.asQueryResultIterable(fetchOptions);
+		return new InsightIterable(raw.asQueryResultIterable(fetchOptions), collector, query);
 	}
 
 	@Override
@@ -48,32 +48,34 @@ public class InsightPreparedQuery implements PreparedQuery {
 
 	@Override
 	public QueryResultIterable<Entity> asQueryResultIterable() {
-		return raw.asQueryResultIterable();
+		return new InsightIterable(raw.asQueryResultIterable(), collector, query);
 	}
 
 	@Override
 	public Iterator<Entity> asIterator(FetchOptions fetchOptions) {
-		return raw.asIterator(fetchOptions);
+		return InsightIterator.create(raw.asIterator(fetchOptions), collector, query);
 	}
 
 	@Override
 	public Iterator<Entity> asIterator() {
-		return raw.asIterator();
+		return InsightIterator.create(raw.asIterator(), collector, query);
 	}
 
 	@Override
 	public QueryResultIterator<Entity> asQueryResultIterator(FetchOptions fetchOptions) {
-		return raw.asQueryResultIterator(fetchOptions);
+		return InsightIterator.create(raw.asQueryResultIterator(fetchOptions), collector, query);
 	}
 
 	@Override
 	public QueryResultIterator<Entity> asQueryResultIterator() {
-		return raw.asQueryResultIterator();
+		return InsightIterator.create(raw.asQueryResultIterator(), collector, query);
 	}
 
 	@Override
 	public Entity asSingleEntity() throws TooManyResultsException {
-		return raw.asSingleEntity();
+		Entity ent = raw.asSingleEntity();
+		collector.collect(Bucket.forQuery(ent, query));
+		return ent;
 	}
 
 	@Override

@@ -12,12 +12,12 @@ public class InsightIterable implements QueryResultIterable<Entity> {
 
 	private final Iterable<Entity> raw;
 
-	private final InsightCollector collector;
+	protected final InsightCollector collector;
 
-	private final String query;
+	protected final String query;
 
 	@Override
 	public QueryResultIterator<Entity> iterator() {
-		return new InsightIterator(raw.iterator(), collector, query);
+		return InsightIterator.create(raw.iterator(), collector, query);
 	}
 }
