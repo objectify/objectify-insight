@@ -16,4 +16,9 @@ public class BucketKey {
 	private String kind;
 	private Operation op;
 	private String query;
+
+	/**
+	 * Time is a currentTimeMillis() rounded to a block edge for aggregation.
+	 */
+	private long time;
 }

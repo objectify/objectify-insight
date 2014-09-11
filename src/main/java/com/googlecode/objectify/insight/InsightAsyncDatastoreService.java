@@ -23,24 +23,24 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 
 	private final AsyncDatastoreService raw;
 
-	private final InsightCollector collector;
+	private final Recorder recorder;
 
 	@Override
 	public Future<Entity> get(Key key) {
-		collector.collect(Bucket.forGet(key));
+		recorder.get(key);
 		return raw.get(key);
 	}
 
 	@Override
 	public Future<Entity> get(Transaction transaction, Key key) {
-		collector.collect(Bucket.forGet(key));
+		recorder.get(key);
 		return raw.get(transaction, key);
 	}
 
 	@Override
 	public Future<Map<Key, Entity>> get(Iterable<Key> keys) {
 		for (Key key: keys)
-			collector.collect(Bucket.forGet(key));
+			recorder.get(key);
 
 		return raw.get(keys);
 	}
@@ -48,35 +48,35 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	@Override
 	public Future<Map<Key, Entity>> get(Transaction transaction, Iterable<Key> keys) {
 		for (Key key: keys)
-			collector.collect(Bucket.forGet(key));
+			recorder.get(key);
 
 		return raw.get(transaction, keys);
 	}
 
 	@Override
 	public Future<Key> put(Entity entity) {
-		collector.collect(Bucket.forPut(entity));
+		recorder.put(entity);
 		return raw.put(entity);
 	}
 
 	@Override
 	public Future<Key> put(Transaction transaction, Entity entity) {
-		collector.collect(Bucket.forPut(entity));
+		recorder.put(entity);
 		return raw.put(transaction, entity);
 	}
 
 	@Override
 	public Future<List<Key>> put(Iterable<Entity> entities) {
-		for (Entity ent: entities)
-			collector.collect(Bucket.forPut(ent));
+		for (Entity entity: entities)
+			recorder.put(entity);
 
 		return raw.put(entities);
 	}
 
 	@Override
 	public Future<List<Key>> put(Transaction transaction, Iterable<Entity> entities) {
-		for (Entity ent: entities)
-			collector.collect(Bucket.forPut(ent));
+		for (Entity entity: entities)
+			recorder.put(entity);
 
 		return raw.put(transaction, entities);
 	}
@@ -84,7 +84,7 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	@Override
 	public Future<Void> delete(Key... keys) {
 		for (Key key: keys)
-			collector.collect(Bucket.forDelete(key));
+			recorder.delete(key);
 
 		return raw.delete(keys);
 	}
@@ -92,7 +92,7 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	@Override
 	public Future<Void> delete(Transaction transaction, Key... keys) {
 		for (Key key: keys)
-			collector.collect(Bucket.forDelete(key));
+			recorder.delete(key);
 
 		return raw.delete(transaction, keys);
 	}
@@ -100,7 +100,7 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	@Override
 	public Future<Void> delete(Iterable<Key> keys) {
 		for (Key key: keys)
-			collector.collect(Bucket.forDelete(key));
+			recorder.delete(key);
 
 		return raw.delete(keys);
 	}
@@ -108,7 +108,7 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	@Override
 	public Future<Void> delete(Transaction transaction, Iterable<Key> keys) {
 		for (Key key: keys)
-			collector.collect(Bucket.forDelete(key));
+			recorder.delete(key);
 
 		return raw.delete(transaction, keys);
 	}
@@ -145,12 +145,12 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 
 	@Override
 	public PreparedQuery prepare(Query query) {
-		return new InsightPreparedQuery(raw.prepare(query), collector, query.toString());
+		return new InsightPreparedQuery(raw.prepare(query), recorder, query.toString());
 	}
 
 	@Override
 	public PreparedQuery prepare(Transaction transaction, Query query) {
-		return new InsightPreparedQuery(raw.prepare(transaction, query), collector, query.toString());
+		return new InsightPreparedQuery(raw.prepare(transaction, query), recorder, query.toString());
 	}
 
 	@Override

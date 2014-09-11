@@ -19,6 +19,7 @@ import java.util.logging.Level;
 public class InsightCollector {
 
 	/** Where we flush statistics when we cross thresholds */
+	@Getter
 	private final Flusher flusher;
 
 	/** Date at which the first bucket as added; null if empty */
@@ -42,7 +43,7 @@ public class InsightCollector {
 	private Map<BucketKey, Bucket> lazyBuckets;
 
 	/**
-	 * Use the standard Flusher
+	 * Use the standard Flusher & Clock
 	 */
 	public InsightCollector() {
 		this(new Flusher());

@@ -5,6 +5,7 @@ import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.googlecode.objectify.insight.Bucket;
+import com.googlecode.objectify.insight.BucketFactory;
 import com.googlecode.objectify.insight.BucketList;
 import com.googlecode.objectify.insight.Flusher;
 import com.googlecode.objectify.insight.test.util.TestBase;
@@ -27,18 +28,20 @@ public class FlusherTest extends TestBase {
 	@Mock private Queue queue;
 	@Captor	private ArgumentCaptor<TaskOptions> taskCaptor;
 
+	private BucketFactory bucketFactory;
 	private Flusher flusher;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
+		bucketFactory = constantTimeBucketFactory();
 		flusher = new Flusher(queue);
 	}
 
 	@Test
 	public void flushingBucketsProducesJsonPullTask() throws Exception {
 		List<Bucket> buckets = new ArrayList<>();
-		buckets.add(Bucket.forGet("ns", "kindA", 123));
-		buckets.add(Bucket.forGet("ns", "kindB", 456));
+		buckets.add(bucketFactory.forGet("ns", "kindA", 123));
+		buckets.add(bucketFactory.forGet("ns", "kindB", 456));
 
 		flusher.flush(buckets);
 

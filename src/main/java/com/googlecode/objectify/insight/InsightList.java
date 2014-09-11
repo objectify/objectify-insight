@@ -23,8 +23,8 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 
 	private boolean collected;
 
-	public InsightList(List<Entity> raw, InsightCollector collector, String query) {
-		super(raw, collector, query);
+	public InsightList(List<Entity> raw, Recorder recorder, String query) {
+		super(raw, recorder, query);
 
 		this.raw = raw;
 	}
@@ -61,7 +61,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 		if (!collected) {
 			collected = true;
 			for (Object o : array)
-				collector.collect(Bucket.forQuery((Entity)o, query));
+				recorder.query((Entity)o, query);
 		}
 
 		return array;
@@ -74,7 +74,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 		if (!collected) {
 			collected = true;
 			for (Object o : array)
-				collector.collect(Bucket.forQuery((Entity)o, query));
+				recorder.query((Entity)o, query);
 		}
 
 		return array;
@@ -156,7 +156,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 
 		if (!collected) {
 			collected = true;
-			rawIt = InsightIterator.create(rawIt, collector, query);
+			rawIt = InsightIterator.create(rawIt, recorder, query);
 		}
 
 		return rawIt;
@@ -168,7 +168,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 
 		if (!collected) {
 			collected = true;
-			rawIt = InsightIterator.create(rawIt, collector, query);
+			rawIt = InsightIterator.create(rawIt, recorder, query);
 		}
 
 		return rawIt;

@@ -10,9 +10,10 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.QueryResultIterable;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Transaction;
-import com.googlecode.objectify.insight.Bucket;
+import com.googlecode.objectify.insight.BucketFactory;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
 import com.googlecode.objectify.insight.InsightCollector;
+import com.googlecode.objectify.insight.Recorder;
 import com.googlecode.objectify.insight.test.util.FakeQueryResultList;
 import com.googlecode.objectify.insight.test.util.FakeQueryResultList.QueryResult;
 import com.googlecode.objectify.insight.test.util.TestBase;
@@ -34,6 +35,7 @@ public class InsightPreparedQueryTest extends TestBase {
 	private Query QUERY;
 
 	private InsightAsyncDatastoreService service;
+	private BucketFactory bucketFactory;
 
 	@Mock private InsightCollector collector;
 	@Mock private AsyncDatastoreService rawService;
@@ -41,6 +43,8 @@ public class InsightPreparedQueryTest extends TestBase {
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
+		bucketFactory = constantTimeBucketFactory();
+
 		when(rawService.prepare(any(Query.class))).thenReturn(rawPq);
 		when(rawService.prepare(any(Transaction.class), any(Query.class))).thenReturn(rawPq);
 
@@ -51,7 +55,7 @@ public class InsightPreparedQueryTest extends TestBase {
 
 		QUERY = new Query("Thing", KeyFactory.createKey("Parent", 567L));
 
-		service = new InsightAsyncDatastoreService(rawService, collector);
+		service = new InsightAsyncDatastoreService(rawService, new Recorder(bucketFactory, collector));
 	}
 
 	private void iterate(Iterable<?> iterable) {
@@ -65,7 +69,7 @@ public class InsightPreparedQueryTest extends TestBase {
 	/** We can get rid of a lot of boilerplate */
 	private void runTest(Runnable work) {
 		runInNamespace("ns", work);
-		verify(collector).collect(Bucket.forQuery("ns", "Thing", QUERY.toString(), 1));
+		verify(collector).collect(bucketFactory.forQuery("ns", "Thing", QUERY.toString(), 1));
 	}
 
 	@Test

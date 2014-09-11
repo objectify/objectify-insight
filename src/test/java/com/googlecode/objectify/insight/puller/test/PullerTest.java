@@ -3,6 +3,7 @@ package com.googlecode.objectify.insight.puller.test;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.TaskHandle;
 import com.googlecode.objectify.insight.Bucket;
+import com.googlecode.objectify.insight.BucketFactory;
 import com.googlecode.objectify.insight.BucketList;
 import com.googlecode.objectify.insight.puller.BigUploader;
 import com.googlecode.objectify.insight.puller.Puller;
@@ -22,6 +23,7 @@ public class PullerTest extends TestBase {
 	@Mock private Queue queue;
 	@Mock private BigUploader bigUploader;
 
+	private BucketFactory bucketFactory;
 	private Bucket bucket1;
 	private Bucket bucket2;
 	private Bucket bucket3;
@@ -32,10 +34,12 @@ public class PullerTest extends TestBase {
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
-		bucket1 = Bucket.forGet("ns", "kindA", 11);
-		bucket2 = Bucket.forGet("ns", "kindB", 22);
-		bucket3 = Bucket.forGet("ns", "kindA", 33);
-		bucket4 = Bucket.forGet("ns", "kindB", 44);
+		bucketFactory = new BucketFactory();
+
+		bucket1 = bucketFactory.forGet("ns", "kindA", 11);
+		bucket2 = bucketFactory.forGet("ns", "kindB", 22);
+		bucket3 = bucketFactory.forGet("ns", "kindA", 33);
+		bucket4 = bucketFactory.forGet("ns", "kindB", 44);
 
 		bucketList1 = new BucketList(Arrays.asList(bucket1, bucket2));
 		bucketList2 = new BucketList(Arrays.asList(bucket3, bucket4));
@@ -57,8 +61,8 @@ public class PullerTest extends TestBase {
 		verify(queue).deleteTaskAsync(Arrays.asList(taskHandle1, taskHandle2));
 
 		verify(bigUploader).upload(buckets(Arrays.asList(
-				Bucket.forGet("ns", "kindA", 44),
-				Bucket.forGet("ns", "kindB", 66)
+				bucketFactory.forGet("ns", "kindA", 44),
+				bucketFactory.forGet("ns", "kindB", 66)
 		)));
 	}
 }

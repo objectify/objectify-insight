@@ -17,64 +17,64 @@ public class InsightPreparedQuery implements PreparedQuery {
 
 	private final PreparedQuery raw;
 
-	private final InsightCollector collector;
+	private final Recorder recorder;
 
 	private final String query;
 
 	@Override
 	public List<Entity> asList(FetchOptions fetchOptions) {
-		return new InsightList(raw.asList(fetchOptions), collector, query);
+		return new InsightList(raw.asList(fetchOptions), recorder, query);
 	}
 
 	@Override
 	public QueryResultList<Entity> asQueryResultList(FetchOptions fetchOptions) {
-		return new InsightList(raw.asQueryResultList(fetchOptions), collector, query);
+		return new InsightList(raw.asQueryResultList(fetchOptions), recorder, query);
 	}
 
 	@Override
 	public Iterable<Entity> asIterable(FetchOptions fetchOptions) {
-		return new InsightIterable(raw.asIterable(fetchOptions), collector, query);
+		return new InsightIterable(raw.asIterable(fetchOptions), recorder, query);
 	}
 
 	@Override
 	public QueryResultIterable<Entity> asQueryResultIterable(FetchOptions fetchOptions) {
-		return new InsightQueryResultIterable(raw.asQueryResultIterable(fetchOptions), collector, query);
+		return new InsightQueryResultIterable(raw.asQueryResultIterable(fetchOptions), recorder, query);
 	}
 
 	@Override
 	public Iterable<Entity> asIterable() {
-		return new InsightIterable(raw.asIterable(), collector, query);
+		return new InsightIterable(raw.asIterable(), recorder, query);
 	}
 
 	@Override
 	public QueryResultIterable<Entity> asQueryResultIterable() {
-		return new InsightQueryResultIterable(raw.asQueryResultIterable(), collector, query);
+		return new InsightQueryResultIterable(raw.asQueryResultIterable(), recorder, query);
 	}
 
 	@Override
 	public Iterator<Entity> asIterator(FetchOptions fetchOptions) {
-		return InsightIterator.create(raw.asIterator(fetchOptions), collector, query);
+		return InsightIterator.create(raw.asIterator(fetchOptions), recorder, query);
 	}
 
 	@Override
 	public Iterator<Entity> asIterator() {
-		return InsightIterator.create(raw.asIterator(), collector, query);
+		return InsightIterator.create(raw.asIterator(), recorder, query);
 	}
 
 	@Override
 	public QueryResultIterator<Entity> asQueryResultIterator(FetchOptions fetchOptions) {
-		return InsightIterator.create(raw.asQueryResultIterator(fetchOptions), collector, query);
+		return InsightIterator.create(raw.asQueryResultIterator(fetchOptions), recorder, query);
 	}
 
 	@Override
 	public QueryResultIterator<Entity> asQueryResultIterator() {
-		return InsightIterator.create(raw.asQueryResultIterator(), collector, query);
+		return InsightIterator.create(raw.asQueryResultIterator(), recorder, query);
 	}
 
 	@Override
 	public Entity asSingleEntity() throws TooManyResultsException {
 		Entity ent = raw.asSingleEntity();
-		collector.collect(Bucket.forQuery(ent, query));
+		recorder.query(ent, query);
 		return ent;
 	}
 

@@ -11,7 +11,7 @@ public class InsightIterable implements Iterable<Entity> {
 
 	private final Iterable<Entity> raw;
 
-	protected final InsightCollector collector;
+	protected final Recorder recorder;
 
 	protected final String query;
 
@@ -23,7 +23,7 @@ public class InsightIterable implements Iterable<Entity> {
 			return raw.iterator();
 		} else {
 			collected = true;
-			return InsightIterator.create(raw.iterator(), collector, query);
+			return InsightIterator.create(raw.iterator(), recorder, query);
 		}
 	}
 }

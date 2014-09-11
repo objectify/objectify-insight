@@ -23,7 +23,7 @@ public class InsightIterator implements InvocationHandler {
 
 	private final Object raw;
 
-	private final InsightCollector collector;
+	private final Recorder recorder;
 
 	private final String query;
 
@@ -32,16 +32,16 @@ public class InsightIterator implements InvocationHandler {
 		Object result = method.invoke(raw, args);
 
 		if (method.equals(NEXT_METHOD) || method.equals(PREVIOUS_METHOD)) {
-			collector.collect(Bucket.forQuery((Entity)result, query));
+			recorder.query((Entity)result, query);
 		}
 
 		return result;
 	}
 
-	public static Interface create(Iterator<Entity> raw, InsightCollector collector, String query) {
+	public static Interface create(Iterator<Entity> raw, Recorder recorder, String query) {
 		return (Interface)Proxy.newProxyInstance(
 				Interface.class.getClassLoader(),
 				new Class[]{Interface.class},
-				new InsightIterator(raw, collector, query));
+				new InsightIterator(raw, recorder, query));
 	}
 }

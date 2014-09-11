@@ -12,6 +12,8 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.googlecode.objectify.insight.Bucket;
+import com.googlecode.objectify.insight.BucketFactory;
+import com.googlecode.objectify.insight.Clock;
 import com.googlecode.objectify.insight.Flusher;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.AfterMethod;
@@ -19,6 +21,8 @@ import org.testng.annotations.BeforeMethod;
 import java.util.Collection;
 import java.util.Collections;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * All tests should extend this class to set up the GAE environment.
@@ -88,4 +92,13 @@ public class TestBase
 	protected String makeUniqueString() {
 		return new Object().toString().split("@")[1];
 	}
+
+
+	/** Useful for making stable tests */
+	protected BucketFactory constantTimeBucketFactory() {
+		Clock clock = mock(Clock.class);
+		when(clock.getTime()).thenReturn(100L);	// just a stable value
+		return new BucketFactory(clock);
+	}
+
 }
