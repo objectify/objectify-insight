@@ -1,11 +1,13 @@
 package com.googlecode.objectify.insight;
 
+import com.google.api.client.util.Value;
+
 /**
  * Possible operations we track as a dimension
  */
 public enum Operation {
-	LOAD,
-	INSERT,
-	UPDATE,
-	DELETE
+	@Value LOAD,
+	@Value INSERT,
+	@Value UPDATE,
+	@Value DELETE
 }

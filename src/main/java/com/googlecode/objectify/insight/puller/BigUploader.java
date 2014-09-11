@@ -42,14 +42,16 @@ public class BigUploader {
 			TableRow row = new TableRow();
 			row.set("namespace", bucket.getKey().getNamespace());
 			row.set("kind", bucket.getKey().getKind());
-			row.set("op", bucket.getKey());
+			row.set("op", bucket.getKey().getOp());
 			row.set("query", bucket.getKey().getQuery());
 			row.set("reads", bucket.getReads());
 			row.set("writes", bucket.getWrites());
 
 			TableDataInsertAllRequest.Rows rowWrapper = new TableDataInsertAllRequest.Rows();
 
-			// TODO: make the insertid the stable md5 hash of the bucket
+			// As much as we would like to do this there isn't really any kind of stable hash because we
+			// are constantly aggregating. If we really want this, we will have to stop aggregating at the
+			// task level (the thing that retries).
 			//rowWrapper.setInsertId(timestamp);
 
 			rowWrapper.setJson(row);
@@ -66,6 +68,10 @@ public class BigUploader {
 					.tabledata()
 					.insertAll(insightDataset.projectId(), insightDataset.datasetId(), tableId, request)
 					.execute();
+
+			if (response.getInsertErrors() != null && !response.getInsertErrors().isEmpty()) {
+				throw new RuntimeException("There were errors! " + response.getInsertErrors());
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
