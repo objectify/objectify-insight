@@ -10,7 +10,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
-import lombok.RequiredArgsConstructor;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +19,17 @@ import java.util.concurrent.Future;
 
 /**
  */
-@RequiredArgsConstructor
 public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 
 	private final AsyncDatastoreService raw;
 
 	private final Recorder recorder;
+
+	@Inject
+	public InsightAsyncDatastoreService(@Named("raw") AsyncDatastoreService raw, Recorder recorder) {
+		this.raw = raw;
+		this.recorder = recorder;
+	}
 
 	@Override
 	public Future<Entity> get(Key key) {
