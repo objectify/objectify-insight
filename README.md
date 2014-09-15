@@ -30,6 +30,7 @@ Insight has several moving parts:
 The resulting BigQuery table data will look something like this:
 
 | uploaded | namespace | kind | op | query | time | reads | writes |
+| -------- | --------- | ---- | -- | ----- | ---- | ----- | ------ |
 | 2014-09-15 04:58:40 UTC | namespace2 | Thing1 | LOAD | SELECT * FROM Thing1 WHERE __key__ > !namespace2:Thing1(535) | 2014-09-15 04:58:40 UTC | 4 | 0 |	 
 | 2014-09-15 04:58:40 UTC | namespace1 | Thing2 | DELETE | | 2014-09-15 04:58:40 UTC | 0 | 1 |	 
 | 2014-09-15 04:58:40 UTC | namespace1 | Thing1 | SAVE | | 2014-09-15 04:58:40 UTC | 0 | 1 |	 
@@ -94,8 +95,8 @@ It is not dangerous to expose these endpoints to the public, but they are not fo
 
 #### Servlets without Guice
 
-If you are not using Guice, extend the `AbstractTableMakerServlet` and `AbstractPullerServlet` classes.
-They offer a poor-man's DI system.
+If you are not using Guice (or another JSR-330 compabile DI framework), extend the `AbstractTableMakerServlet` 
+and `AbstractPullerServlet` classes. They offer a poor-man's DI system.
 
 ### Get an AsyncDatastoreService
 
@@ -108,9 +109,9 @@ Here is the minimum Guice configuration you would need to be able to get the `Re
 out of the injector. That is, we want this to work:
 
 ```java
-AsyncDatastoreService tracksMetrics = new InsightAsyncDatastoreService(
-	DatastoreServiceFactory.getAsyncDatastoreService(),
-	injector.getInstance(Recorder.class);
+AsyncDatastoreService raw = DatastoreServiceFactory.getAsyncDatastoreService();
+Recorder recorder = injector.getInstance(Recorder.class);
+AsyncDatastoreService tracksMetrics = new InsightAsyncDatastoreService(raw, recorder);
 ```
 
 These are the bindings you will need to create in your Guice module:
@@ -229,4 +230,4 @@ Released under the MIT License.
 
 ## Thanks
 
-Thanks to Better Cloud (http://www.bettercloud.com/) for funding this project!
+Huge thanks to Better Cloud (http://www.bettercloud.com/) for funding this project!
