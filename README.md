@@ -29,11 +29,15 @@ Insight has several moving parts:
    
 The resulting BigQuery table data will look something like this:
 
-| uploaded | namespace | kind | op | query | time | reads | writes |
-| -------- | --------- | ---- | -- | ----- | ---- | ----- | ------ |
-| 2014-09-15 04:58:40 UTC | namespace2 | Thing1 | LOAD | SELECT * FROM Thing1 WHERE __key__ > !namespace2:Thing1(535) | 2014-09-15 04:58:40 UTC | 4 | 0 |	 
-| 2014-09-15 04:58:40 UTC | namespace1 | Thing2 | DELETE | | 2014-09-15 04:58:40 UTC | 0 | 1 |	 
-| 2014-09-15 04:58:40 UTC | namespace1 | Thing1 | SAVE | | 2014-09-15 04:58:40 UTC | 0 | 1 |	 
+```
+| uploaded                | namespace  | kind   | op     | query                          | time                    | reads | writes |
+| ----------------------- | ---------- | ------ | ------ | ------------------------------ | ----------------------- | ----- | ------ |
+| 2014-09-15 04:58:40 UTC | namespace2 | Thing1 | LOAD   | SELECT * FROM Thing1 WHERE ... | 2014-09-15 04:58:40 UTC | 4     | 0      |	 
+| 2014-09-15 04:58:40 UTC | namespace1 | Thing2 | DELETE |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |	 
+| 2014-09-15 04:58:40 UTC | namespace1 | Thing1 | SAVE   |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |
+```
+
+[why on earth doesn't this file on github support github-flavored-markdown tables??]
 
 If you've ever seen a ROLAP database, this should look familiar. *namespace*, *kind*, *op*, *query*, and *time* are
 dimensions; *reads* and *writes* are the aggregated statistics.
