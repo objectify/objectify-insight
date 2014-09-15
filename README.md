@@ -37,13 +37,14 @@ The resulting BigQuery table data will look something like this:
 | 2014-09-15 04:58:40 UTC | namespace1 | Thing1 | SAVE   |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |
 ```
 
-[why on earth doesn't this file on github support github-flavored-markdown tables??]
-
 If you've ever seen a ROLAP database, this should look familiar. *namespace*, *kind*, *op*, *query*, and *time* are
 dimensions; *reads* and *writes* are the aggregated statistics.
  
 *uploaded* is the date that the batch was uploaded to BigQuery. *time* is the actual date of the operation,
 rounded to a configurable boundary (default 1 minute) to allow for reasonable aggregation.
+
+*reads* and *writes* are entity counts, not operation counts. Insight cannot determine the number of write operations
+required to update or delete the indexes of an entity.
 
 ## Installation
 
