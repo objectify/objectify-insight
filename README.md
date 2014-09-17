@@ -235,4 +235,4 @@ Released under the MIT License.
 
 ## Thanks
 
-Huge thanks to Better Cloud (http://www.bettercloud.com/) for funding this project!
+Huge thanks to BetterCloud (http://www.bettercloud.com/) for funding this project!
