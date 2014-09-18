@@ -6,6 +6,7 @@ import com.google.appengine.api.datastore.Key;
 import lombok.Getter;
 import lombok.Setter;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import java.util.Set;
  * Make it easier to record activities. By default records only kinds that you
  * register with recordKind(), but if you setRecordAll(), it will record everything.
  */
+@Singleton
 public class Recorder {
 
 	@Getter
