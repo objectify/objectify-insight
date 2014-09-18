@@ -156,7 +156,27 @@ Creating an authenticated instance of `Bigquery` is not in the scope of this doc
 Guice will inject it into Insight. Insight also needs to know the project and dataset ids for bigquery, and the
 pull queue that will be used for aggregation.
 
+### Decide what to record
+
+By default, Insight ignores everything. You can tell the `Recorder` to record specific kinds or to record everything.
+`Recorder` is a singleton; this configuration only needs to happen once:
+
+```java
+Recorder recorder = injector.getInstance(Recorder.class);
+
+// You can specify kinds individually
+recorder.recordKind("Thing");
+recorder.recordKind("OtherThing");
+
+// If true, all kinds will be recorded
+recorder.setRecordAll(true);
+```
+
 ### Use Insight with Objectify
+
+Assuming you have injected the `Recorder` into your `ObjectifyFactory`, override these methods:
+
+#### ObjectifyFactory.createRawAsyncDatastoreService() 
 
 The `ObjectifyFactory` uses an overridable method to obtain the low-level `AsyncDatastoreService` interface. 
 Override this method and return your wrapper `InsightAsyncDatastoreService`:
@@ -169,7 +189,22 @@ Override this method and return your wrapper `InsightAsyncDatastoreService`:
 	}
 ```
 
-The `Recorder` should be the value you obtained from Guice.
+#### ObjectifyFactory.register()
+
+This allows you to use the `Collect` annotation on POJO entity classes to enable recording. This is an alternative
+to registering kinds one-at-a-time by hand.
+
+```java
+	@Override
+	public <T> void register(Class<T> clazz) {
+		super.register(clazz);
+
+		if (clazz.isAnnotationPresent(Collect.class))
+			recorder.recordKind(Key.getKind(clazz));
+	}
+```
+
+This override can be skipped if you use `Recorder.setRecordAll(true)`.
   
 ## Configuration
 

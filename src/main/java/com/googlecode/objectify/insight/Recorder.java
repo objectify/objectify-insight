@@ -35,8 +35,11 @@ public class Recorder {
 	}
 
 	/**
-	 * Add a kind to the list of kinds that get recorded. Unless recordAll is set,
-	 * only these kinds will be recorded.
+	 * <p>Add a kind to the list of kinds that get recorded. Unless recordAll is set,
+	 * only these kinds will be recorded.</p>
+	 *
+	 * <p>This method is not thread-safe; register all kinds at application startup,
+	 * before you begin using the InsightAsyncDatastoreService.</p>
 	 */
 	public void recordKind(String kind) {
 		recordKinds.add(kind);
