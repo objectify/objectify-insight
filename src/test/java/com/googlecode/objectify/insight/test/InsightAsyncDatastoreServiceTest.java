@@ -37,7 +37,11 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
 		bucketFactory = constantTimeBucketFactory();
-		service = new InsightAsyncDatastoreService(raw, new Recorder(bucketFactory, collector));
+
+		Recorder recorder = new Recorder(bucketFactory, collector);
+		recorder.setRecordAll(true);
+
+		service = new InsightAsyncDatastoreService(raw, recorder);
 	}
 
 	@Test

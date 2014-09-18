@@ -55,7 +55,9 @@ public class InsightPreparedQueryTest extends TestBase {
 
 		QUERY = new Query("Thing", KeyFactory.createKey("Parent", 567L));
 
-		service = new InsightAsyncDatastoreService(rawService, new Recorder(bucketFactory, collector));
+		Recorder recorder = new Recorder(bucketFactory, collector);
+		recorder.setRecordAll(true);
+		service = new InsightAsyncDatastoreService(rawService, recorder);
 	}
 
 	private void iterate(Iterable<?> iterable) {
