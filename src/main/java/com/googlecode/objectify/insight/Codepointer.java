@@ -10,8 +10,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Identifies codepoints. Also logs codepoints which have never been seen before so that developers
@@ -19,19 +18,19 @@ import java.util.Set;
  */
 @Singleton
 @Log
-public class CodePointer {
+public class Codepointer {
 
 	/** If set true, we will not record code points - they will all be empty strings */
 	@Getter @Setter
 	private boolean disabled;
 
-	/** Track which ones we've logged already */
-	private Set<String> logged = new HashSet<>();
+	/** Track which ones we've logged already. It's a Set, just map to the key value */
+	private ConcurrentHashMap<String, String> logged = new ConcurrentHashMap<>();
 
 	/**
 	 * Get the hash of the code point. Also logs the definition of the code point, once per codepoint (per instance).
 	 */
-	public String getCodePoint() {
+	public String getCodepoint() {
 
 		// It's tempting to getStackTrace() so we can skip all the Insight noise, but that would
 		// clone the stacktrace which seems like extra gc work.
@@ -42,8 +41,8 @@ public class CodePointer {
 
 		String digest = digest(stack);
 
-		if (logged.add(digest)) {
-			log.info("Code point " + digest + " is " + stack);
+		if (logged.putIfAbsent(digest, digest) == null) {
+			log.info("Codepoint " + digest + " is " + stack);
 		}
 
 		return digest;

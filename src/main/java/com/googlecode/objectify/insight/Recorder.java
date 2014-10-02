@@ -25,7 +25,7 @@ public class Recorder {
 	private final Collector collector;
 
 	@Getter
-	private final CodePointer codePointer;
+	private final Codepointer codepointer;
 
 	private final Set<String> recordKinds = new HashSet<>();
 
@@ -33,10 +33,10 @@ public class Recorder {
 	private boolean recordAll;
 
 	@Inject
-	public Recorder(BucketFactory bucketFactory, Collector collector, CodePointer codePointer) {
+	public Recorder(BucketFactory bucketFactory, Collector collector, Codepointer codepointer) {
 		this.bucketFactory = bucketFactory;
 		this.collector = collector;
-		this.codePointer = codePointer;
+		this.codepointer = codepointer;
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class Recorder {
 
 		Batch() {
 			namespace = NamespaceManager.get();
-			codePoint = codePointer.getCodePoint();
+			codePoint = codepointer.getCodepoint();
 		}
 
 		/**

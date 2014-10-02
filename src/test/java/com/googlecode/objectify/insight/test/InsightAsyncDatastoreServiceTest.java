@@ -8,7 +8,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.BucketFactory;
-import com.googlecode.objectify.insight.CodePointer;
+import com.googlecode.objectify.insight.Codepointer;
 import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
 import com.googlecode.objectify.insight.InsightPreparedQuery;
@@ -35,15 +35,15 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 
 	@Mock private AsyncDatastoreService raw;
 	@Mock private Collector collector;
-	@Mock private CodePointer codePointer;
+	@Mock private Codepointer codepointer;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
 		bucketFactory = constantTimeBucketFactory();
 
-		when(codePointer.getCodePoint()).thenReturn("here");
+		when(codepointer.getCodepoint()).thenReturn("here");
 
-		Recorder recorder = new Recorder(bucketFactory, collector, codePointer);
+		Recorder recorder = new Recorder(bucketFactory, collector, codepointer);
 		recorder.setRecordAll(true);
 
 		service = new InsightAsyncDatastoreService(raw, recorder);
