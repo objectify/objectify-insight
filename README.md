@@ -30,14 +30,14 @@ Insight has several moving parts:
 The resulting BigQuery table data will look something like this:
 
 ```
-| uploaded                | namespace  | kind   | op     | query                          | time                    | reads | writes |
-| ----------------------- | ---------- | ------ | ------ | ------------------------------ | ----------------------- | ----- | ------ |
-| 2014-09-15 04:58:40 UTC | namespace2 | Thing1 | LOAD   | SELECT * FROM Thing1 WHERE ... | 2014-09-15 04:58:40 UTC | 4     | 0      |	 
-| 2014-09-15 04:58:40 UTC | namespace1 | Thing2 | DELETE |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |	 
-| 2014-09-15 04:58:40 UTC | namespace1 | Thing1 | SAVE   |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |
+| uploaded                | codepoint                        | namespace  | kind   | op     | query                          | time                    | reads | writes |
+| ----------------------- | -------------------------------- | ---------- | ------ | ------ | ------------------------------ | ----------------------- | ----- | ------ |
+| 2014-09-15 04:58:40 UTC | d41d8cd98f00b204e9800998ecf8427e | namespace2 | Thing1 | QUERY  | SELECT * FROM Thing1 WHERE ... | 2014-09-15 04:58:40 UTC | 4     | 0      |	 
+| 2014-09-15 04:58:40 UTC | 9e107d9d372bb6826bd81d3542a419d6 | namespace1 | Thing2 | DELETE |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |	 
+| 2014-09-15 04:58:40 UTC | e4d909c290d0fb1ca068ffaddf22cbd0 | namespace1 | Thing1 | SAVE   |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |
 ```
 
-If you've ever seen a ROLAP database, this should look familiar. *namespace*, *kind*, *op*, *query*, and *time* are
+If you've ever seen a ROLAP database, this should look familiar. *codepoint*, *namespace*, *kind*, *op*, *query*, and *time* are
 dimensions; *reads* and *writes* are the aggregated statistics.
  
 *uploaded* is the date that the batch was uploaded to BigQuery. *time* is the actual date of the operation,
@@ -45,6 +45,10 @@ rounded to a configurable boundary (default 1 minute) to allow for reasonable ag
 
 *reads* and *writes* are entity counts, not operation counts. Insight cannot determine the number of write operations
 required to update or delete the indexes of an entity.
+
+*codepoint* is the md5 hash of a stacktrace to the unique point in your code where the datastore operation took place.
+To look up the actual stacktrace, grep your App Engine logs for the hash value. Each instance will log the
+definition of each codepoint exactly once. 
 
 ## Installation
 
@@ -170,6 +174,12 @@ recorder.recordKind("OtherThing");
 
 // If true, all kinds will be recorded
 recorder.setRecordAll(true);
+```
+
+You can disable recording of codepoint hashes by calling:
+
+```java
+recorder.getCodepointer().setDisabled(true);
 ```
 
 ### Use Insight with Objectify
