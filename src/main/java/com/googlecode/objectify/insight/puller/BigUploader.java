@@ -42,6 +42,7 @@ public class BigUploader {
 		for (Bucket bucket : buckets) {
 			TableRow row = new TableRow();
 			row.set("uploaded", System.currentTimeMillis() / 1000f);	// unix timestamp
+			row.set("codepoint", bucket.getKey().getCodepoint());
 			row.set("namespace", bucket.getKey().getNamespace());
 			row.set("kind", bucket.getKey().getKind());
 			row.set("op", bucket.getKey().getOp());

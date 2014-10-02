@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BucketKey {
-	private String codePoint;
+	private String codepoint;
 	private String namespace;
 	private String kind;
 	private Operation op;
