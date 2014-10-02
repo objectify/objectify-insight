@@ -25,7 +25,7 @@ public class BucketFactory {
 	/**
 	 */
 	public Bucket forGet(String namespace, String kind, long readCount) {
-		return new Bucket(new BucketKey(namespace, kind, Operation.LOAD, null, clock.getTime()), readCount, 0);
+		return new Bucket(new BucketKey(namespace, kind, Operation.GET, null, clock.getTime()), readCount, 0);
 	}
 
 	/**
@@ -44,6 +44,6 @@ public class BucketFactory {
 	/**
 	 */
 	public Bucket forQuery(String namespace, String kind, String queryString, long readCount) {
-		return new Bucket(new BucketKey(namespace, kind, Operation.LOAD, queryString, clock.getTime()), readCount, 0);
+		return new Bucket(new BucketKey(namespace, kind, Operation.QUERY, queryString, clock.getTime()), readCount, 0);
 	}
 }
