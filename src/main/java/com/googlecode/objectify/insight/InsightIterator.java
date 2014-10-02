@@ -2,6 +2,7 @@ package com.googlecode.objectify.insight;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.googlecode.objectify.insight.Recorder.QueryBatch;
 import com.googlecode.objectify.insight.util.ReflectionUtils;
 import lombok.RequiredArgsConstructor;
 import java.lang.reflect.InvocationHandler;
@@ -23,25 +24,23 @@ public class InsightIterator implements InvocationHandler {
 
 	private final Object raw;
 
-	private final Recorder recorder;
-
-	private final String query;
+	private final QueryBatch recorderBatch;
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Object result = method.invoke(raw, args);
 
 		if (method.equals(NEXT_METHOD) || method.equals(PREVIOUS_METHOD)) {
-			recorder.query((Entity)result, query);
+			recorderBatch.query((Entity)result);
 		}
 
 		return result;
 	}
 
-	public static Interface create(Iterator<Entity> raw, Recorder recorder, String query) {
+	public static Interface create(Iterator<Entity> raw, QueryBatch recorderBatch) {
 		return (Interface)Proxy.newProxyInstance(
 				Interface.class.getClassLoader(),
 				new Class[]{Interface.class},
-				new InsightIterator(raw, recorder, query));
+				new InsightIterator(raw, recorderBatch));
 	}
 }

@@ -10,6 +10,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
+import com.googlecode.objectify.insight.Recorder.Batch;
+import com.googlecode.objectify.insight.Recorder.QueryBatch;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Collection;
@@ -33,88 +35,96 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 
 	@Override
 	public Future<Entity> get(Key key) {
-		recorder.get(key);
+		recorder.batch().get(key);
 		return raw.get(key);
 	}
 
 	@Override
 	public Future<Entity> get(Transaction transaction, Key key) {
-		recorder.get(key);
+		recorder.batch().get(key);
 		return raw.get(transaction, key);
 	}
 
 	@Override
 	public Future<Map<Key, Entity>> get(Iterable<Key> keys) {
+		Batch batch = recorder.batch();
 		for (Key key: keys)
-			recorder.get(key);
+			batch.get(key);
 
 		return raw.get(keys);
 	}
 
 	@Override
 	public Future<Map<Key, Entity>> get(Transaction transaction, Iterable<Key> keys) {
+		Batch batch = recorder.batch();
 		for (Key key: keys)
-			recorder.get(key);
+			batch.get(key);
 
 		return raw.get(transaction, keys);
 	}
 
 	@Override
 	public Future<Key> put(Entity entity) {
-		recorder.put(entity);
+		recorder.batch().put(entity);
 		return raw.put(entity);
 	}
 
 	@Override
 	public Future<Key> put(Transaction transaction, Entity entity) {
-		recorder.put(entity);
+		recorder.batch().put(entity);
 		return raw.put(transaction, entity);
 	}
 
 	@Override
 	public Future<List<Key>> put(Iterable<Entity> entities) {
+		Batch batch = recorder.batch();
 		for (Entity entity: entities)
-			recorder.put(entity);
+			batch.put(entity);
 
 		return raw.put(entities);
 	}
 
 	@Override
 	public Future<List<Key>> put(Transaction transaction, Iterable<Entity> entities) {
+		Batch batch = recorder.batch();
 		for (Entity entity: entities)
-			recorder.put(entity);
+			batch.put(entity);
 
 		return raw.put(transaction, entities);
 	}
 
 	@Override
 	public Future<Void> delete(Key... keys) {
+		Batch batch = recorder.batch();
 		for (Key key: keys)
-			recorder.delete(key);
+			batch.delete(key);
 
 		return raw.delete(keys);
 	}
 
 	@Override
 	public Future<Void> delete(Transaction transaction, Key... keys) {
+		Batch batch = recorder.batch();
 		for (Key key: keys)
-			recorder.delete(key);
+			batch.delete(key);
 
 		return raw.delete(transaction, keys);
 	}
 
 	@Override
 	public Future<Void> delete(Iterable<Key> keys) {
+		Batch batch = recorder.batch();
 		for (Key key: keys)
-			recorder.delete(key);
+			batch.delete(key);
 
 		return raw.delete(keys);
 	}
 
 	@Override
 	public Future<Void> delete(Transaction transaction, Iterable<Key> keys) {
+		Batch batch = recorder.batch();
 		for (Key key: keys)
-			recorder.delete(key);
+			batch.delete(key);
 
 		return raw.delete(transaction, keys);
 	}
@@ -153,8 +163,10 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	public PreparedQuery prepare(Query query) {
 		PreparedQuery pq = raw.prepare(query);
 
-		if (!query.isKeysOnly())
-			pq = new InsightPreparedQuery(pq, recorder, query.toString());
+		if (!query.isKeysOnly()) {
+			QueryBatch batch = recorder.query(query);
+			pq = new InsightPreparedQuery(pq, batch);
+		}
 
 		return pq;
 	}
@@ -163,8 +175,10 @@ public class InsightAsyncDatastoreService implements AsyncDatastoreService {
 	public PreparedQuery prepare(Transaction transaction, Query query) {
 		PreparedQuery pq = raw.prepare(transaction, query);
 
-		if (!query.isKeysOnly())
-			pq = new InsightPreparedQuery(pq, recorder, query.toString());
+		if (!query.isKeysOnly()) {
+			QueryBatch batch = recorder.query(query);
+			pq = new InsightPreparedQuery(pq, batch);
+		}
 
 		return pq;
 	}

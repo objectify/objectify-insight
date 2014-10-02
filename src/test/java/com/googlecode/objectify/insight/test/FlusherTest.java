@@ -40,8 +40,8 @@ public class FlusherTest extends TestBase {
 	@Test
 	public void flushingBucketsProducesJsonPullTask() throws Exception {
 		List<Bucket> buckets = new ArrayList<>();
-		buckets.add(bucketFactory.forGet("ns", "kindA", 123));
-		buckets.add(bucketFactory.forGet("ns", "kindB", 456));
+		buckets.add(bucketFactory.forGet("here", "ns", "kindA", 123));
+		buckets.add(bucketFactory.forGet("here", "ns", "kindB", 456));
 
 		flusher.flush(buckets);
 

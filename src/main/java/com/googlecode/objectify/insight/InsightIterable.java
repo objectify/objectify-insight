@@ -1,6 +1,7 @@
 package com.googlecode.objectify.insight;
 
 import com.google.appengine.api.datastore.Entity;
+import com.googlecode.objectify.insight.Recorder.QueryBatch;
 import lombok.RequiredArgsConstructor;
 import java.util.Iterator;
 
@@ -11,9 +12,7 @@ public class InsightIterable implements Iterable<Entity> {
 
 	private final Iterable<Entity> raw;
 
-	protected final Recorder recorder;
-
-	protected final String query;
+	protected final QueryBatch recorderBatch;
 
 	private boolean collected;
 
@@ -23,7 +22,7 @@ public class InsightIterable implements Iterable<Entity> {
 			return raw.iterator();
 		} else {
 			collected = true;
-			return InsightIterator.create(raw.iterator(), recorder, query);
+			return InsightIterator.create(raw.iterator(), recorderBatch);
 		}
 	}
 }

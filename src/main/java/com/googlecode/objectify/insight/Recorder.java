@@ -3,6 +3,7 @@ package com.googlecode.objectify.insight;
 import com.google.appengine.api.NamespaceManager;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Query;
 import lombok.Getter;
 import lombok.Setter;
 import javax.inject.Inject;
@@ -23,15 +24,19 @@ public class Recorder {
 	@Getter
 	private final Collector collector;
 
+	@Getter
+	private final CodePointer codePointer;
+
 	private final Set<String> recordKinds = new HashSet<>();
 
 	@Getter @Setter
 	private boolean recordAll;
 
 	@Inject
-	public Recorder(BucketFactory bucketFactory, Collector collector) {
+	public Recorder(BucketFactory bucketFactory, Collector collector, CodePointer codePointer) {
 		this.bucketFactory = bucketFactory;
 		this.collector = collector;
+		this.codePointer = codePointer;
 	}
 
 	/**
@@ -50,31 +55,64 @@ public class Recorder {
 		return recordAll || recordKinds.contains(kind);
 	}
 
-	/**
-	 */
-	public void get(Key key) {
-		if (shouldRecord(key.getKind()))
-			collector.collect(bucketFactory.forGet(NamespaceManager.get(), key.getKind(), 1));
+	/** Create a new batch for recording */
+	public Batch batch() {
+		return new Batch();
+	}
+
+	/** Create a new batch for recording query data */
+	public QueryBatch query(Query query) {
+		return new QueryBatch(query);
 	}
 
 	/**
+	 * A session of recording associated with a particular code point.
 	 */
-	public void put(Entity entity) {
-		if (shouldRecord(entity.getKind()))
-			collector.collect(bucketFactory.forPut(NamespaceManager.get(), entity.getKind(), !entity.getKey().isComplete(), 1));
+	public class Batch {
+
+		protected final String namespace;
+		protected final String codePoint;
+
+		Batch() {
+			namespace = NamespaceManager.get();
+			codePoint = codePointer.getCodePoint();
+		}
+
+		/**
+		 */
+		public void get(Key key) {
+			if (shouldRecord(key.getKind()))
+				collector.collect(bucketFactory.forGet(codePoint, namespace, key.getKind(), 1));
+		}
+
+		/**
+		 */
+		public void put(Entity entity) {
+			if (shouldRecord(entity.getKind()))
+				collector.collect(bucketFactory.forPut(codePoint, namespace, entity.getKind(), !entity.getKey().isComplete(), 1));
+		}
+
+		/**
+		 */
+		public void delete(Key key) {
+			if (shouldRecord(key.getKind()))
+				collector.collect(bucketFactory.forDelete(codePoint, namespace, key.getKind(), 1));
+		}
 	}
 
-	/**
-	 */
-	public void delete(Key key) {
-		if (shouldRecord(key.getKind()))
-			collector.collect(bucketFactory.forDelete(NamespaceManager.get(), key.getKind(), 1));
-	}
+	public class QueryBatch extends Batch {
+		protected final String query;
 
-	/**
-	 */
-	public void query(Entity entity, String queryString) {
-		if (shouldRecord(entity.getKind()))
-			collector.collect(bucketFactory.forQuery(NamespaceManager.get(), entity.getKind(), queryString, 1));
+		/** */
+		QueryBatch(Query q) {
+			query = q.toString();
+		}
+
+		/**
+		 */
+		public void query(Entity entity) {
+			if (shouldRecord(entity.getKind()))
+				collector.collect(bucketFactory.forQuery(codePoint, namespace, entity.getKind(), query, 1));
+		}
 	}
 }

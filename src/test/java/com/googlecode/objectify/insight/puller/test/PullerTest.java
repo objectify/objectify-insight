@@ -36,10 +36,10 @@ public class PullerTest extends TestBase {
 	public void setUpFixture() throws Exception {
 		bucketFactory = new BucketFactory();
 
-		bucket1 = bucketFactory.forGet("ns", "kindA", 11);
-		bucket2 = bucketFactory.forGet("ns", "kindB", 22);
-		bucket3 = bucketFactory.forGet("ns", "kindA", 33);
-		bucket4 = bucketFactory.forGet("ns", "kindB", 44);
+		bucket1 = bucketFactory.forGet("here", "ns", "kindA", 11);
+		bucket2 = bucketFactory.forGet("here", "ns", "kindB", 22);
+		bucket3 = bucketFactory.forGet("here", "ns", "kindA", 33);
+		bucket4 = bucketFactory.forGet("here", "ns", "kindB", 44);
 
 		bucketList1 = new BucketList(Arrays.asList(bucket1, bucket2));
 		bucketList2 = new BucketList(Arrays.asList(bucket3, bucket4));
@@ -61,8 +61,8 @@ public class PullerTest extends TestBase {
 		verify(queue).deleteTaskAsync(Arrays.asList(taskHandle1, taskHandle2));
 
 		verify(bigUploader).upload(buckets(Arrays.asList(
-				bucketFactory.forGet("ns", "kindA", 44),
-				bucketFactory.forGet("ns", "kindB", 66)
+				bucketFactory.forGet("here", "ns", "kindA", 44),
+				bucketFactory.forGet("here", "ns", "kindB", 66)
 		)));
 	}
 }

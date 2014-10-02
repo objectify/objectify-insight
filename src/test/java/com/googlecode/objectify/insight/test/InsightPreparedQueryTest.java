@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.QueryResultIterable;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.BucketFactory;
+import com.googlecode.objectify.insight.CodePointer;
 import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
 import com.googlecode.objectify.insight.Recorder;
@@ -40,6 +41,7 @@ public class InsightPreparedQueryTest extends TestBase {
 	@Mock private Collector collector;
 	@Mock private AsyncDatastoreService rawService;
 	@Mock private PreparedQuery rawPq;
+	@Mock private CodePointer codePointer;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
@@ -48,6 +50,8 @@ public class InsightPreparedQueryTest extends TestBase {
 		when(rawService.prepare(any(Query.class))).thenReturn(rawPq);
 		when(rawService.prepare(any(Transaction.class), any(Query.class))).thenReturn(rawPq);
 
+		when(codePointer.getCodePoint()).thenReturn("here");
+
 		// Constants, but need to wait until the gae apienvironment is set up
 		List<Entity> entities = new ArrayList<>();
 		entities.add(new Entity("Thing", 123L));
@@ -55,7 +59,7 @@ public class InsightPreparedQueryTest extends TestBase {
 
 		QUERY = new Query("Thing", KeyFactory.createKey("Parent", 567L));
 
-		Recorder recorder = new Recorder(bucketFactory, collector);
+		Recorder recorder = new Recorder(bucketFactory, collector, codePointer);
 		recorder.setRecordAll(true);
 		service = new InsightAsyncDatastoreService(rawService, recorder);
 	}
@@ -71,7 +75,7 @@ public class InsightPreparedQueryTest extends TestBase {
 	/** We can get rid of a lot of boilerplate */
 	private void runTest(Runnable work) {
 		runInNamespace("ns", work);
-		verify(collector).collect(bucketFactory.forQuery("ns", "Thing", QUERY.toString(), 1));
+		verify(collector).collect(bucketFactory.forQuery("here", "ns", "Thing", QUERY.toString(), 1));
 	}
 
 	@Test

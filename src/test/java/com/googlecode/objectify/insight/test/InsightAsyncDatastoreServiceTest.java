@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.googlecode.objectify.insight.BucketFactory;
+import com.googlecode.objectify.insight.CodePointer;
 import com.googlecode.objectify.insight.Collector;
 import com.googlecode.objectify.insight.InsightAsyncDatastoreService;
 import com.googlecode.objectify.insight.InsightPreparedQuery;
@@ -22,6 +23,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the nonquery methods. Query methods are tested in InsightPreparedQueryTest.
@@ -33,12 +35,15 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 
 	@Mock private AsyncDatastoreService raw;
 	@Mock private Collector collector;
+	@Mock private CodePointer codePointer;
 
 	@BeforeMethod
 	public void setUpFixture() throws Exception {
 		bucketFactory = constantTimeBucketFactory();
 
-		Recorder recorder = new Recorder(bucketFactory, collector);
+		when(codePointer.getCodePoint()).thenReturn("here");
+
+		Recorder recorder = new Recorder(bucketFactory, collector, codePointer);
 		recorder.setRecordAll(true);
 
 		service = new InsightAsyncDatastoreService(raw, recorder);
@@ -54,7 +59,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forGet("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forGet("here", "ns", "Thing", 1));
 	}
 
 	@Test
@@ -67,7 +72,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forGet("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forGet("here", "ns", "Thing", 1));
 	}
 
 	@Test
@@ -80,7 +85,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forGet("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forGet("here", "ns", "Thing", 1));
 	}
 
 	@Test
@@ -93,7 +98,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forGet("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forGet("here", "ns", "Thing", 1));
 	}
 
 	@Test
@@ -106,7 +111,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", true, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", true, 1));
 	}
 
 	@Test
@@ -119,7 +124,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", false, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", false, 1));
 	}
 
 	@Test
@@ -132,7 +137,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", true, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", true, 1));
 	}
 
 	@Test
@@ -145,7 +150,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", false, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", false, 1));
 	}
 
 	@Test
@@ -157,8 +162,8 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", true, 1));
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", false, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", true, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", false, 1));
 	}
 
 	@Test
@@ -170,8 +175,8 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", true, 1));
-		verify(collector).collect(bucketFactory.forPut("ns", "Thing", false, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", true, 1));
+		verify(collector).collect(bucketFactory.forPut("here", "ns", "Thing", false, 1));
 	}
 
 	@Test
@@ -184,7 +189,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forDelete("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forDelete("here", "ns", "Thing", 1));
 	}
 
 	@Test
@@ -197,7 +202,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forDelete("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forDelete("here", "ns", "Thing", 1));
 	}
 
 	@Test
@@ -210,7 +215,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forDelete("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forDelete("here", "ns", "Thing", 1));
 	}
 
 	@Test
@@ -223,7 +228,7 @@ public class InsightAsyncDatastoreServiceTest extends TestBase {
 			}
 		});
 
-		verify(collector).collect(bucketFactory.forDelete("ns", "Thing", 1));
+		verify(collector).collect(bucketFactory.forDelete("here", "ns", "Thing", 1));
 	}
 
 	@Test

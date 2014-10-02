@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Index;
 import com.google.appengine.api.datastore.QueryResultList;
+import com.googlecode.objectify.insight.Recorder.QueryBatch;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
@@ -23,8 +24,8 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 
 	private boolean collected;
 
-	public InsightList(List<Entity> raw, Recorder recorder, String query) {
-		super(raw, recorder, query);
+	public InsightList(List<Entity> raw, QueryBatch recorderBatch) {
+		super(raw, recorderBatch);
 
 		this.raw = raw;
 	}
@@ -61,7 +62,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 		if (!collected) {
 			collected = true;
 			for (Object o : array)
-				recorder.query((Entity)o, query);
+				recorderBatch.query((Entity)o);
 		}
 
 		return array;
@@ -74,7 +75,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 		if (!collected) {
 			collected = true;
 			for (Object o : array)
-				recorder.query((Entity)o, query);
+				recorderBatch.query((Entity)o);
 		}
 
 		return array;
@@ -156,7 +157,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 
 		if (!collected) {
 			collected = true;
-			rawIt = InsightIterator.create(rawIt, recorder, query);
+			rawIt = InsightIterator.create(rawIt, recorderBatch);
 		}
 
 		return rawIt;
@@ -168,7 +169,7 @@ public class InsightList extends InsightIterable implements QueryResultList<Enti
 
 		if (!collected) {
 			collected = true;
-			rawIt = InsightIterator.create(rawIt, recorder, query);
+			rawIt = InsightIterator.create(rawIt, recorderBatch);
 		}
 
 		return rawIt;

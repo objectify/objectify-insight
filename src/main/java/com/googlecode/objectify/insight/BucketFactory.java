@@ -24,26 +24,26 @@ public class BucketFactory {
 
 	/**
 	 */
-	public Bucket forGet(String namespace, String kind, long readCount) {
-		return new Bucket(new BucketKey(namespace, kind, Operation.GET, null, clock.getTime()), readCount, 0);
+	public Bucket forGet(String codePoint, String namespace, String kind, long readCount) {
+		return new Bucket(new BucketKey(codePoint, namespace, kind, Operation.GET, null, clock.getTime()), readCount, 0);
 	}
 
 	/**
 	 */
-	public Bucket forPut(String namespace, String kind, boolean insert, long writeCount) {
+	public Bucket forPut(String codePoint, String namespace, String kind, boolean insert, long writeCount) {
 		Operation op = insert ? Operation.INSERT : Operation.UPDATE;
-		return new Bucket(new BucketKey(namespace, kind, op, null, clock.getTime()), 0, writeCount);
+		return new Bucket(new BucketKey(codePoint, namespace, kind, op, null, clock.getTime()), 0, writeCount);
 	}
 
 	/**
 	 */
-	public Bucket forDelete(String namespace, String kind, long writeCount) {
-		return new Bucket(new BucketKey(namespace, kind, Operation.DELETE, null, clock.getTime()), 0, writeCount);
+	public Bucket forDelete(String codePoint, String namespace, String kind, long writeCount) {
+		return new Bucket(new BucketKey(codePoint, namespace, kind, Operation.DELETE, null, clock.getTime()), 0, writeCount);
 	}
 
 	/**
 	 */
-	public Bucket forQuery(String namespace, String kind, String queryString, long readCount) {
-		return new Bucket(new BucketKey(namespace, kind, Operation.QUERY, queryString, clock.getTime()), readCount, 0);
+	public Bucket forQuery(String codePoint, String namespace, String kind, String queryString, long readCount) {
+		return new Bucket(new BucketKey(codePoint, namespace, kind, Operation.QUERY, queryString, clock.getTime()), readCount, 0);
 	}
 }

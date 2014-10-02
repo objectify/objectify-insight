@@ -40,8 +40,8 @@ public class InsightCollectorTimeTest extends TestBase {
 		collector.setSizeThreshold(2);
 
 		Set<Bucket> expected = new LinkedHashSet<>();
-		expected.add(bucketFactory.forGet("ns", "kindA", 1));
-		expected.add(bucketFactory.forGet("ns", "kindA", 2));
+		expected.add(bucketFactory.forGet("here", "ns", "kindA", 1));
+		expected.add(bucketFactory.forGet("here", "ns", "kindA", 2));
 
 		for (Bucket bucket: expected)
 			collector.collect(bucket);
