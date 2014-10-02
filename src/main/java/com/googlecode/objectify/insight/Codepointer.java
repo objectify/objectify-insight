@@ -31,6 +31,8 @@ public class Codepointer {
 	 * Get the hash of the code point. Also logs the definition of the code point, once per codepoint (per instance).
 	 */
 	public String getCodepoint() {
+		if (disabled)
+			return "disabled";
 
 		// It's tempting to getStackTrace() so we can skip all the Insight noise, but that would
 		// clone the stacktrace which seems like extra gc work.
