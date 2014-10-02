@@ -48,7 +48,7 @@ required to update or delete the indexes of an entity.
 
 *codepoint* is the md5 hash of a stacktrace to the unique point in your code where the datastore operation took place.
 To look up the actual stacktrace, grep your App Engine logs for the hash value. Each instance will log the
-definition of each codepoint exactly once. 
+definition of each codepoint exactly once. Enable INFO logging at `com.googlecode.objectify.insight`.
 
 ## Installation
 
