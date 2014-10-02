@@ -9,7 +9,7 @@
 
 	<groupId>com.googlecode.objectify</groupId>
 	<artifactId>objectify-insight</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 
 	<name>Objectify App Engine Insight</name>
 	<description>Insight into your high-volume datastore behavior</description>
