@@ -1,22 +1,20 @@
 package com.googlecode.objectify.insight;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.BaseEncoding;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.java.Log;
-
-import javax.inject.Singleton;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.inject.Singleton;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.java.Log;
+
+import com.google.common.io.BaseEncoding;
+import com.googlecode.objectify.insight.util.StackTraceUtils;
 
 /**
  * Identifies codepoints. Also logs codepoints which have never been seen before so that developers
@@ -25,9 +23,6 @@ import java.util.regex.Pattern;
 @Singleton
 @Log
 public class Codepointer {
-
-	// http://regex101.com/r/aC1pS0/5
-	private static Pattern pattern = Pattern.compile("((?:EnhancerBy|FastClassBy)\\w+)(\\${2})(\\w+)(\\${0,2}\\.?)");
 
 	/** If set true, we will not record code points - they will all be empty strings */
 	@Getter @Setter
@@ -59,18 +54,7 @@ public class Codepointer {
 		StringWriter stackWriter = new StringWriter(1024);
 		new Exception().printStackTrace(new PrintWriter(stackWriter));
 		String stack = stackWriter.toString();
-		stack = removeMutableEnhancements(stack);
-		return stack;
-	}
-
-	@VisibleForTesting
-	public String removeMutableEnhancements(String oldStack) {
-		String stack = oldStack;
-		Matcher m = pattern.matcher(stack);
-		if (m.find()) {
-		    // replace first number with "number" and second number with the first
-			stack = m.replaceAll("$1$2$4");
-		}
+		stack = StackTraceUtils.removeMutableEnhancements(stack);
 		return stack;
 	}
 	
