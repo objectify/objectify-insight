@@ -200,6 +200,12 @@
 			<artifactId>testng</artifactId>
 			<version>6.8</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>hamcrest-core</artifactId>
+					<groupId>org.hamcrest</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -207,6 +213,12 @@
 			<artifactId>mockito-core</artifactId>
 			<version>1.9.5</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>hamcrest-core</artifactId>
+					<groupId>org.hamcrest</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -215,6 +227,7 @@
 			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
+	
 
 		<!--<dependency>-->
 			<!--<groupId>org.powermock</groupId>-->
@@ -233,7 +246,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.14.4</version>
+			<version>1.14.8</version>
 			<scope>provided</scope>
 		</dependency>
 
