@@ -4,6 +4,8 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.googlecode.objectify.insight.BucketList;
 import com.googlecode.objectify.insight.util.QueueHelper;
 import com.googlecode.objectify.insight.util.TaskHandleHelper;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.java.Log;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,7 +23,7 @@ import java.util.logging.Level;
 public class Puller {
 
 	/** */
-	public static final int DEFAULT_BATCH_SIZE = 100;
+	public static final int DEFAULT_BATCH_SIZE = 20;
 
 	/** Something long enough to be safe */
 	public static final int DEFAULT_LEASE_DURATION_SECONDS = 60 * 10;
@@ -33,9 +35,11 @@ public class Puller {
 	private final BigUploader bigUploader;
 
 	/** Number of tasks to lease and aggregate per write to BQ */
+	@Getter @Setter
 	private int batchSize = DEFAULT_BATCH_SIZE;
 
 	/** How long to maintain task leases; short values risk duplicates */
+	@Getter @Setter
 	private int leaseDurationSeconds = DEFAULT_LEASE_DURATION_SECONDS;
 
 	/**

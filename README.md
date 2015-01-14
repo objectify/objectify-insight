@@ -259,6 +259,20 @@ picker.setFormat(new SimpleDateFormat("'myprefix_'YYMMdd");
 
 You can change the format of table names; be sure to include any prefix as a constant in the DateFormat.
 
+### Puller
+
+```java
+Puller puller = injector.getInstance(Puller.class);
+puller.setBatchSize(50);
+puller.setLeaseDurationSeconds(300);
+```
+
+The Puller pulls batches of data off of the pull queue and pushes them to BigQuery. Since BigQuery is limited
+to how large a single request can be, you might need to adjust the batch size. The default is 20. If you get
+"request too large" errors, adjust this down.
+
+See https://github.com/stickfigure/objectify-insight/issues/3
+
 ## Limitations
 
 Insight tracks all of the datastore operations used by Objectify, but does not track every operation you can
