@@ -18,8 +18,8 @@
 	<scm>
 		<url>scm:git:https://github.com/stickfigure/objectify-insight.git</url>
 		<developerConnection>scm:git:https://github.com/stickfigure/objectify-insight.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<licenses>
 		<license>
 			<name>MIT License</name>
