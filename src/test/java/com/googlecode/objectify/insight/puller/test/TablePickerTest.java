@@ -28,7 +28,7 @@ public class TablePickerTest extends TestBase {
 
 		String picked = picker.pick();
 
-		String expected = "OBJSTATS_" + new SimpleDateFormat("YYYY_MM_dd").format(new Date());
+		String expected = "OBJSTATS_" + new SimpleDateFormat("YYYYMMdd").format(new Date());
 
 		assertThat(picked, equalTo(expected));
 	}

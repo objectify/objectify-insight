@@ -6,9 +6,12 @@ import com.google.api.services.bigquery.model.Table;
 import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableReference;
 import com.google.api.services.bigquery.model.TableSchema;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.java.Log;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,8 +22,6 @@ import java.util.List;
  */
 @Log
 public class TablePicker {
-	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("YYYY_MM_dd");
-
 	/** Number of days ahead to create tables. */
 	private static final int DAYS_AHEAD = 7;
 
@@ -29,6 +30,14 @@ public class TablePicker {
 
 	private final Bigquery bigquery;
 	private final InsightDataset insightDataset;
+
+	/**
+	 * Default format is SimpleDateFormat("'OBJSTATS_'YYYYMMdd") which will produce
+	 * values like OBJSTATS_20150114. If you set the format, be sure to include any
+	 * desired table name prefix.
+	 */
+	@Getter @Setter
+	private DateFormat format = new SimpleDateFormat("'OBJSTATS_'YYYYMMdd");;
 
 	@Inject
 	public TablePicker(Bigquery bigquery, InsightDataset insightDataset) {
@@ -57,7 +66,7 @@ public class TablePicker {
 
 	/** */
 	private String tableIdFor(Date date) {
-		return "OBJSTATS_" + FORMAT.format(date);
+		return format.format(date);
 	}
 
 	/** */
