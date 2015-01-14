@@ -16,8 +16,8 @@
 	<packaging>jar</packaging>
 	<url>http://code.google.com/p/objectify-insight/</url>
 	<scm>
-		<url>scm:git:https://code.google.com/p/objectify-insight/</url>
-		<developerConnection>scm:git:https://code.google.com/p/objectify-insight/</developerConnection>
+		<url>scm:git:https://github.com/stickfigure/objectify-insight.git</url>
+		<developerConnection>scm:git:https://github.com/stickfigure/objectify-insight.git</developerConnection>
 	</scm>
 	<licenses>
 		<license>
