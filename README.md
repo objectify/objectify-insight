@@ -250,6 +250,15 @@ Most requests come in at fairly unique millisecond clock values. In order to get
 we must 'round' clock values to something more granular. Coarser (higher) numbers provide better aggregation
 at the cost of less precisely knowing when activities happen.
 
+### TablePicker
+
+```java
+TablePicker picker = injector.getInstance(TablePicker.class);
+picker.setFormat(new SimpleDateFormat("'myprefix_'YYMMdd");
+```
+
+You can change the format of table names; be sure to include any prefix as a constant in the DateFormat.
+
 ## Limitations
 
 Insight tracks all of the datastore operations used by Objectify, but does not track every operation you can
