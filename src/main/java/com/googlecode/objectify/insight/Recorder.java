@@ -70,11 +70,9 @@ public class Recorder {
 	 */
 	public class Batch {
 
-		protected final String namespace;
 		protected final String codePoint;
 
 		Batch() {
-			namespace = NamespaceManager.get();
 			codePoint = codepointer.getCodepoint();
 		}
 
@@ -82,21 +80,21 @@ public class Recorder {
 		 */
 		public void get(Key key) {
 			if (shouldRecord(key.getKind()))
-				collector.collect(bucketFactory.forGet(codePoint, namespace, key.getKind(), 1));
+				collector.collect(bucketFactory.forGet(codePoint, key.getNamespace(), key.getKind(), 1));
 		}
 
 		/**
 		 */
 		public void put(Entity entity) {
 			if (shouldRecord(entity.getKind()))
-				collector.collect(bucketFactory.forPut(codePoint, namespace, entity.getKind(), !entity.getKey().isComplete(), 1));
+				collector.collect(bucketFactory.forPut(codePoint, entity.getNamespace(), entity.getKind(), !entity.getKey().isComplete(), 1));
 		}
 
 		/**
 		 */
 		public void delete(Key key) {
 			if (shouldRecord(key.getKind()))
-				collector.collect(bucketFactory.forDelete(codePoint, namespace, key.getKind(), 1));
+				collector.collect(bucketFactory.forDelete(codePoint, key.getNamespace(), key.getKind(), 1));
 		}
 	}
 
@@ -112,7 +110,7 @@ public class Recorder {
 		 */
 		public void query(Entity entity) {
 			if (shouldRecord(entity.getKind()))
-				collector.collect(bucketFactory.forQuery(codePoint, namespace, entity.getKind(), query, 1));
+				collector.collect(bucketFactory.forQuery(codePoint, entity.getNamespace(), entity.getKind(), query, 1));
 		}
 	}
 }
