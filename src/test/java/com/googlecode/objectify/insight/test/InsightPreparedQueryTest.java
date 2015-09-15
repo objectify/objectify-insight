@@ -4,12 +4,15 @@ import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.FetchOptions.Builder;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.QueryResultIterable;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Transaction;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import com.googlecode.objectify.insight.BucketFactory;
 import com.googlecode.objectify.insight.Codepointer;
 import com.googlecode.objectify.insight.Collector;
@@ -53,11 +56,22 @@ public class InsightPreparedQueryTest extends TestBase {
 		when(codepointer.getCodepoint()).thenReturn("here");
 
 		// Constants, but need to wait until the gae apienvironment is set up
-		List<Entity> entities = new ArrayList<>();
-		entities.add(new Entity("Thing", 123L));
+		final List<Entity> entities = runInNamespace("ns", new Supplier<List<Entity>>() {
+			@Override
+			public List<Entity> get() {
+				List<Entity> entities = new ArrayList<>();
+				entities.add(new Entity("Thing", 123L));
+				return entities;
+			}
+		});
 		ENTITIES = FakeQueryResultList.create(entities);
 
-		QUERY = new Query("Thing", KeyFactory.createKey("Parent", 567L));
+		QUERY = runInNamespace("ns", new Supplier<Query>() {
+			@Override
+			public Query get() {
+				return new Query("Thing", KeyFactory.createKey("Parent", 567L));
+			}
+		});
 
 		Recorder recorder = new Recorder(bucketFactory, collector, codepointer);
 		recorder.setRecordAll(true);
