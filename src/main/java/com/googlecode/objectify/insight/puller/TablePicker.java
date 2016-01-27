@@ -32,12 +32,12 @@ public class TablePicker {
 	private final InsightDataset insightDataset;
 
 	/**
-	 * Default format is SimpleDateFormat("'OBJSTATS_'YYYYMMdd") which will produce
+	 * Default format is SimpleDateFormat("'OBJSTATS_'yyyyMMdd") which will produce
 	 * values like OBJSTATS_20150114. If you set the format, be sure to include any
 	 * desired table name prefix.
 	 */
 	@Getter @Setter
-	private DateFormat format = new SimpleDateFormat("'OBJSTATS_'YYYYMMdd");;
+	private DateFormat format = new SimpleDateFormat("'OBJSTATS_'yyyyMMdd");;
 
 	@Inject
 	public TablePicker(Bigquery bigquery, InsightDataset insightDataset) {
