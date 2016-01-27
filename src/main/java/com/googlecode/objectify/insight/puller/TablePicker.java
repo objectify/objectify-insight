@@ -37,7 +37,7 @@ public class TablePicker {
 	 * desired table name prefix.
 	 */
 	@Getter @Setter
-	private DateFormat format = new SimpleDateFormat("'OBJSTATS_'YYYYMMdd");;
+	private DateFormat format = new SimpleDateFormat("'OBJSTATS_'yyyyMMdd");;
 
 	@Inject
 	public TablePicker(Bigquery bigquery, InsightDataset insightDataset) {
