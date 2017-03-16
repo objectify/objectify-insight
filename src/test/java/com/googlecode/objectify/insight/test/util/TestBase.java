@@ -111,7 +111,7 @@ public class TestBase
 	protected BucketFactory constantTimeBucketFactory() {
 		Clock clock = mock(Clock.class);
 		when(clock.getTime()).thenReturn(100L);	// just a stable value
-		return new BucketFactory(clock);
+		return new BucketFactory(clock, "module", "version");
 	}
 
 }

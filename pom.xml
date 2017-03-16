@@ -176,7 +176,7 @@
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-bigquery</artifactId>
-			<version>v2-rev163-1.19.0</version>
+			<version>v2-rev337-1.22.0</version>
 		</dependency>
 
 		<!-- Google App Engine -->

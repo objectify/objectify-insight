@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 public class BucketKey {
 	private String codepoint;
 	private String namespace;
+	private String module;
+	private String version;
 	private String kind;
 	private Operation op;
 	private String query;

@@ -29,7 +29,7 @@ public class InsightCollectorTimeTest extends TestBase {
 	public void setUpFixture() throws Exception {
 		when(clock.getTime()).thenReturn(100L, 200L);
 
-		bucketFactory = new BucketFactory(clock);
+		bucketFactory = new BucketFactory(clock, "module", "version");
 		collector = new Collector(flusher);
 	}
 

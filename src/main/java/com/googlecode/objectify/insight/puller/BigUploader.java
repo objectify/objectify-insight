@@ -44,6 +44,8 @@ public class BigUploader {
 			row.set("uploaded", System.currentTimeMillis() / 1000f);	// unix timestamp
 			row.set("codepoint", bucket.getKey().getCodepoint());
 			row.set("namespace", bucket.getKey().getNamespace());
+			row.set("module", bucket.getKey().getModule());
+			row.set("version", bucket.getKey().getVersion());
 			row.set("kind", bucket.getKey().getKind());
 			row.set("op", bucket.getKey().getOp());
 			row.set("query", bucket.getKey().getQuery());
@@ -64,6 +66,7 @@ public class BigUploader {
 		}
 
 		TableDataInsertAllRequest request = new TableDataInsertAllRequest().setRows(rows);
+		request.setIgnoreUnknownValues(true);
 
 		String tableId = tablePicker.pick();
 

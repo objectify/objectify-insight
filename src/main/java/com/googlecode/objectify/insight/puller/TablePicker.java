@@ -102,6 +102,8 @@ public class TablePicker {
 		fields.add(tableFieldSchema("uploaded", "TIMESTAMP"));
 		fields.add(tableFieldSchema("codepoint", "STRING"));
 		fields.add(tableFieldSchema("namespace", "STRING"));
+		fields.add(tableFieldSchema("module", "STRING"));
+		fields.add(tableFieldSchema("version", "STRING"));
 		fields.add(tableFieldSchema("kind", "STRING"));
 		fields.add(tableFieldSchema("op", "STRING"));
 		fields.add(tableFieldSchema("query", "STRING"));
