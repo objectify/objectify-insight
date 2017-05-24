@@ -9,7 +9,7 @@
 
 	<groupId>com.googlecode.objectify</groupId>
 	<artifactId>objectify-insight</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 
 	<name>Objectify App Engine Insight</name>
 	<description>Insight into your high-volume datastore behavior</description>
@@ -18,7 +18,7 @@
 	<scm>
 		<url>scm:git:https://github.com/stickfigure/objectify-insight.git</url>
 		<developerConnection>scm:git:git@github.com:stickfigure/objectify-insight.git</developerConnection>
-		<tag>objectify-insight-1.0.4</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<licenses>
 		<license>
