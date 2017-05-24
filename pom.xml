@@ -14,10 +14,10 @@
 	<name>Objectify App Engine Insight</name>
 	<description>Insight into your high-volume datastore behavior</description>
 	<packaging>jar</packaging>
-	<url>http://code.google.com/p/objectify-insight/</url>
+	<url>https://github.com/objectify/objectify-insight</url>
 	<scm>
 		<url>scm:git:https://github.com/stickfigure/objectify-insight.git</url>
-		<developerConnection>scm:git:https://github.com/stickfigure/objectify-insight.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:stickfigure/objectify-insight.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 	<licenses>
