@@ -5,6 +5,7 @@ import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest.Rows;
 import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
 import com.google.api.services.bigquery.model.TableRow;
+import com.google.common.collect.Lists;
 import com.googlecode.objectify.insight.Bucket;
 import lombok.extern.java.Log;
 import javax.inject.Inject;
@@ -65,22 +66,28 @@ public class BigUploader {
 			rows.add(rowWrapper);
 		}
 
-		TableDataInsertAllRequest request = new TableDataInsertAllRequest().setRows(rows);
-		request.setIgnoreUnknownValues(true);
-
-		String tableId = tablePicker.pick();
-
-		try {
-			TableDataInsertAllResponse response = bigquery
-					.tabledata()
-					.insertAll(insightDataset.projectId(), insightDataset.datasetId(), tableId, request)
-					.execute();
-
-			if (response.getInsertErrors() != null && !response.getInsertErrors().isEmpty()) {
-				throw new RuntimeException("There were errors! " + response.getInsertErrors());
+		// BQ can handle maximum 10000 rows per request
+		// https://cloud.google.com/bigquery/quotas#streaming_inserts
+		// The suggested batch size is 500 but I would like to avoid partitioning the rows if it is possible
+		// so I don't have to worry about buckets that are partially written to BQ
+		for (List<Rows> partition: Lists.partition(rows, 10000)) {
+			TableDataInsertAllRequest request = new TableDataInsertAllRequest().setRows(partition);
+			request.setIgnoreUnknownValues(true);
+	
+			String tableId = tablePicker.pick();
+	
+			try {
+				TableDataInsertAllResponse response = bigquery
+						.tabledata()
+						.insertAll(insightDataset.projectId(), insightDataset.datasetId(), tableId, request)
+						.execute();
+	
+				if (response.getInsertErrors() != null && !response.getInsertErrors().isEmpty()) {
+					throw new RuntimeException("There were errors! " + response.getInsertErrors());
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
 		}
 	}
 }
