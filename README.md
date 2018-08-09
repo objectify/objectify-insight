@@ -276,15 +276,15 @@ See https://github.com/stickfigure/objectify-insight/issues/3
 
 As shown in the [previous section](#decide-what-to-record) codepoint generation can be completely disabled.
 
-Regardless if you decide to keep it enabled, you can tweak it further by replacing the StackProducer. For example:
+Regardless if you decide to keep it enabled, you can tweak it further by replacing the ```StackProducer```. For example:
 ```java
 codepointer.setStackProducer(new AdvancedStackProducer());
 ```
 You can modify what to include in the stacktrace used to generate the codepoint. You can get rid of
 the irrelevant classes from the plaform, filters, servlets, package names can be abbreviated, etc.
 
-This affects the stacktrace dump seen once per instance, but it can be also achieved that a refactor
-- or an addition of a new filter - won't change every codepoint you have.
+This affects the stacktrace dump seen once per instance, but it can be also achieved
+that a refactor - or an addition of a new filter - won't change every codepoint you have.
 
 ##### LegacyStackProducer
 Uses the pre-1.0.5 behaviour, which keeps the stacktrace intact, and only removes the mutable parts from generated classes' names.
