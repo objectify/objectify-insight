@@ -1,8 +1,8 @@
 # Objectify Insight
 
 This library provides insight into your high-volume GAE datastore activity. It records read and write activity
-broken down by time, namespace, kind, operation, and query and aggregates this data into Google BigQuery. By
-aggregating at multiple levels, Insight scales to thousands of requests per second.
+broken down by time, namespace, module, version, kind, operation, and query and aggregates this data into Google BigQuery.
+By aggregating at multiple levels, Insight scales to thousands of requests per second.
  
 Insight works well with Google App Engine applications that use Objectify, but (with some limitations) it can work 
 with any application that uses the low level datastore API.
@@ -30,21 +30,20 @@ Insight has several moving parts:
 The resulting BigQuery table data will look something like this:
 
 ```
-| uploaded                | codepoint                        | namespace  | kind   | op     | query                          | time                    | reads | writes |
-| ----------------------- | -------------------------------- | ---------- | ------ | ------ | ------------------------------ | ----------------------- | ----- | ------ |
-| 2014-09-15 04:58:40 UTC | d41d8cd98f00b204e9800998ecf8427e | namespace2 | Thing1 | QUERY  | SELECT * FROM Thing1 WHERE ... | 2014-09-15 04:58:40 UTC | 4     | 0      |	 
-| 2014-09-15 04:58:40 UTC | 9e107d9d372bb6826bd81d3542a419d6 | namespace1 | Thing2 | DELETE |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |	 
-| 2014-09-15 04:58:40 UTC | e4d909c290d0fb1ca068ffaddf22cbd0 | namespace1 | Thing1 | SAVE   |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |
+| uploaded                | codepoint                        | namespace  | module   | version | kind   | op     | query                          | time                    | reads | writes |
+| ----------------------- | -------------------------------- | ---------- | -------- | ------- | ------ | ------ | ------------------------------ | ----------------------- | ----- | ------ |
+| 2014-09-15 04:58:40 UTC | d41d8cd98f00b204e9800998ecf8427e | namespace2 | default  | v1      | Thing1 | QUERY  | SELECT * FROM Thing1 WHERE ... | 2014-09-15 04:58:40 UTC | 4     | 0      |	 
+| 2014-09-15 04:58:40 UTC | 9e107d9d372bb6826bd81d3542a419d6 | namespace1 | deferred | v1      | Thing2 | DELETE |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |	 
+| 2014-09-15 04:58:40 UTC | e4d909c290d0fb1ca068ffaddf22cbd0 | namespace1 | default  | v2      | Thing1 | SAVE   |                                | 2014-09-15 04:58:40 UTC | 0     | 1      |
 ```
 
-If you've ever seen a ROLAP database, this should look familiar. *codepoint*, *namespace*, *kind*, *op*, *query*, and *time* are
+If you've ever seen a ROLAP database, this should look familiar. *codepoint*, *namespace*, *module*, *version*, *kind*, *op*, *query*, and *time* are
 dimensions; *reads* and *writes* are the aggregated statistics.
  
 *uploaded* is the date that the batch was uploaded to BigQuery. *time* is the actual date of the operation,
 rounded to a configurable boundary (default 1 minute) to allow for reasonable aggregation.
 
-*reads* and *writes* are entity counts, not operation counts. Insight cannot determine the number of write operations
-required to update or delete the indexes of an entity.
+*reads* and *writes* are entity counts, not operation counts.
 
 *codepoint* is the md5 hash of a stacktrace to the unique point in your code where the datastore operation took place.
 To look up the actual stacktrace, grep your App Engine logs for the hash value. Each instance will log the
@@ -160,7 +159,7 @@ Creating an authenticated instance of `Bigquery` is not in the scope of this doc
 Guice will inject it into Insight. Insight also needs to know the project and dataset ids for bigquery, and the
 pull queue that will be used for aggregation.
 
-### Decide what to record
+### [Decide what to record](#decide-what-to-record)
 
 By default, Insight ignores everything. You can tell the `Recorder` to record specific kinds or to record everything.
 `Recorder` is a singleton; this configuration only needs to happen once:
@@ -254,7 +253,7 @@ at the cost of less precisely knowing when activities happen.
 
 ```java
 TablePicker picker = injector.getInstance(TablePicker.class);
-picker.setFormat(new SimpleDateFormat("'myprefix_'YYMMdd");
+picker.setFormat(new SimpleDateFormat("'myprefix_'yyMMdd");
 ```
 
 You can change the format of table names; be sure to include any prefix as a constant in the DateFormat.
@@ -272,6 +271,33 @@ to how large a single request can be, you might need to adjust the batch size. T
 "request too large" errors, adjust this down.
 
 See https://github.com/stickfigure/objectify-insight/issues/3
+
+### Codepointer
+
+As shown in the [previous section](#decide-what-to-record) codepoint generation can be completely disabled.
+
+Regardless if you decide to keep it enabled, you can tweak it further by replacing the StackProducer. For example:
+```java
+codepointer.setStackProducer(new AdvancedStackProducer());
+```
+You can modify what to include in the stacktrace used to generate the codepoint. You can get rid of
+the irrelevant classes from the plaform, filters, servlets, package names can be abbreviated, etc.
+
+This affects the stacktrace dump seen once per instance, but it can be also achieved that a refactor
+- or an addition of a new filter - won't change every codepoint you have.
+
+##### LegacyStackProducer
+Uses the pre-1.0.5 behaviour, which keeps the stacktrace intact, and only removes the mutable parts from generated classes' names.
+
+##### AdvancedStackProducer
+Removes every stacktrace element that is irrelevant. The resulting stacktrace should only contain business-wise important lines.
+
+For example it removes: platform-specific servlets/filters, proxy/reflection related classes, ```guice``` injection related classes,
+```endpoints-java``` related classes, ```gwt-rpc``` related classes, ```objectify```/```objectify-insight``` related classes, etc.
+
+Although you can subclass ```FilteringStackProducer``` and override ```filterStack(Iterable<StackTraceElement> stack)```
+on your own - which is the superclass of ```AdvancedStackProducer``` -, but most likely you can achieve the best result
+by using - or if you need any custom filtering by extending - this class.
 
 ## Limitations
 
