@@ -5,15 +5,18 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.insight.Recorder.QueryBatch;
 import com.googlecode.objectify.insight.util.ReflectionUtils;
 import lombok.RequiredArgsConstructor;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
  * Dynamic proxy which covers any kind of iterator we might run across.
  */
+
 @RequiredArgsConstructor
 public class InsightIterator implements InvocationHandler {
 
@@ -28,7 +31,17 @@ public class InsightIterator implements InvocationHandler {
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		Object result = method.invoke(raw, args);
+		Object result;
+		System.out.println("invoking method "+method.getName()+ " ts "+method.toString()+"# "+ method.getDeclaringClass()+" on "+raw.getClass().getName()+" for "+ proxy.getClass().getName());
+		if(method.getDeclaringClass().equals(ListIterator.class)){
+			if(method.getName().equals("hasNext")){
+				method = Iterator.class.getMethod("hasNext");
+			} else if(method.getName().equals("next")){
+				method = Iterator.class.getMethod("next");
+				
+			}
+		}
+		result = method.invoke(raw, args);
 
 		if (method.equals(NEXT_METHOD) || method.equals(PREVIOUS_METHOD)) {
 			recorderBatch.query((Entity)result);
